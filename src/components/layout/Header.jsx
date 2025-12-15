@@ -19,7 +19,7 @@ const Header = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="hidden md:inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white transition hover:border-glowpurple/70 hover:shadow-[0_0_25px_rgba(148,97,180,0.25)]">
+          <button className="hidden md:inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white transition hover:border-glowpurple/70 hover:shadow-[0_0_25px_rgba(148,97,180,0.25)] cursor-pointer shadow-[0_0_15px_rgba(64,94,185,0.2)]">
             New Task
           </button>
 
