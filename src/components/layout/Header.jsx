@@ -24,7 +24,7 @@ const Header = () => {
           </button>
 
           <div className="flex items-center gap-3 rounded-full bg-white/5 px-3 py-2 border border-white/10 backdrop-blur-md shadow-[0_10px_30px_rgba(15,16,40,0.55)]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-glowpurple via-glowblue to-royal text-white taskly-heading ring-1 ring-white/10 shadow-[0_0_25px_rgba(64,94,185,0.35)]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white taskly-heading ring-1 ring-white/10 shadow-[0_0_25px_rgba(64,94,185,0.35)]">
               JD
             </div>
             <div className="hidden lg:block text-right">
