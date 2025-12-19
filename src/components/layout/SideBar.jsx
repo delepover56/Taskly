@@ -3,7 +3,7 @@ const SideBar = () => {
 
         <aside className="taskly-glass w-full lg:w-72 xl:w-80 p-5 lg:p-6 flex flex-col gap-6 border border-white/10 shadow-[0_0_35px_rgba(148,97,180,0.25)]">
             <div className="flex flex-col justify-center items-center gap-3 text-center rounded-2xl bg-white/5 py-6 border border-white/10">
-                <div className="flex w-20 h-20 items-center justify-center rounded-full bg-[color:var(--color-glowblue)]/90 text-white taskly-heading ring-1 ring-white/15 shadow-[0_0_25px_rgba(64,94,185,0.45)]">
+                <div className="flex w-20 h-20 items-center justify-center rounded-full bg-glowblue/90 text-white taskly-heading ring-1 ring-white/15 shadow-[0_0_25px_rgba(64,94,185,0.45)]">
                     <p className="text-3xl">JD</p>
                 </div>
                 <div className="flex flex-col gap-1">
