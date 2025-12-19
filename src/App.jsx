@@ -1,11 +1,14 @@
 import Header from "./components/layout/Header";
+import SideBar from "./components/layout/SideBar";
 
 function App() {
   return (
     <div className="taskly-glass min-h-[95.5vh] ">
       <Header />
 
-      <main role="main">{/* your content here */}</main>
+      <main role="main" className="hidden sm:flex min-h-screen m-4">
+        <SideBar />
+      </main>
     </div>
   );
 }
