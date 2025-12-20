@@ -6,7 +6,7 @@ function App() {
     <div className="taskly-glass min-h-[95.5vh] ">
       <Header />
 
-      <main role="main" className="hidden sm:flex min-h-screen m-4">
+      <main role="main" className="flex flex-col sm:flex-row min-h-screen m-4">
         <SideBar />
       </main>
     </div>
