@@ -21,9 +21,16 @@ UI elements should match the dark navy / blue / purple gradient theme from the c
   - glass white: rgba(255,255,255,0.12–0.45)
 
 ## TECH STACK
-- "react": "^19.2.0",
-- "@tailwindcss/vite": "^4.1.17",
+ - "@tailwindcss/vite": "^4.1.17",
+ - "react": "^19.2.0",
+ - "react-dom": "^19.2.0",
+ - "swiper": "^12.0.3",
+ - "tailwindcss": "^4.1.17"
+
+## ARCHITECTURE
+- Single Page Application
 - LocalStorage (for tasks)
+- Task Filtering
 - Custom Hooks
 - Component-driven architecture
 
