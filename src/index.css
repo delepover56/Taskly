@@ -38,6 +38,25 @@
 }
 
 @layer utilities {
+  .taskly-shell {
+    position: relative;
+  }
+
+  .taskly-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.02) 60%,
+      rgba(255, 255, 255, 0.01) 100%
+    );
+    pointer-events: none;
+  }
+
   .bg-taskly-gradient {
     background: radial-gradient(circle at 20% 20%,
         rgba(99, 3, 177, 0.548) 0%,
@@ -56,18 +75,15 @@
   }
 
   .taskly-glass {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(var(--blur-lg));
     -webkit-backdrop-filter: blur(var(--blur-lg));
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-xl);
 
-    /* Subtle shadows matching your screenshot */
     box-shadow:
-      0 0 25px rgba(0, 0, 0, 0.24),
-      0 0 35px rgba(120, 90, 200, 0.20);
-
-    /* Smooth inner glow effect seen in your mockup */
+      0 14px 45px rgba(0, 0, 0, 0.35),
+      0 0 45px rgba(120, 90, 200, 0.18);
     outline: 1px solid rgba(255, 255, 255, 0.03);
   }
 

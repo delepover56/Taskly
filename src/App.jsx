@@ -4,11 +4,14 @@ import MobileFilter from "./components/UI/MobileFilter";
 
 function App() {
   return (
-    <div className="taskly-glass min-h-[95.5vh] ">
+    <div className="taskly-shell mx-auto min-h-[calc(100vh-1.75rem)] max-w-[1500px] p-2 sm:p-3">
       <Header />
       <MobileFilter />
 
-      <main role="main" className="flex flex-col sm:flex-row min-h-screen m-4">
+      <main
+        role="main"
+        className="mt-4 grid min-h-[calc(100vh-8.5rem)] grid-cols-1 gap-4 xl:grid-cols-[280px_minmax(0,1fr)_320px]"
+      >
         <SideBar />
       </main>
     </div>
