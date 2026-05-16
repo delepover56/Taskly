@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-VariableFont_opsz,wght.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 100 900;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-Italic-VariableFont_opsz,wght.ttf") format("truetype");
+  font-display: swap;
+  font-style: italic;
+  font-weight: 100 900;
+}
+
+@layer base {
+  :root {
+    --font-sans: "Inter", sans-serif;
+
+    --color-border-soft: rgba(255, 255, 255, 0.075);
+
+    --surface-page:
+      radial-gradient(circle at 18% 12%, rgba(139, 92, 246, 0.22), transparent 28%),
+      radial-gradient(circle at 82% 18%, rgba(6, 182, 212, 0.14), transparent 30%),
+      radial-gradient(circle at 70% 86%, rgba(251, 146, 60, 0.13), transparent 28%),
+      linear-gradient(135deg, #07080d 0%, #0c0e14 48%, #050609 100%);
+    --surface-panel: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.052),
+      rgba(255, 255, 255, 0.025)
+    );
+    --surface-sidebar: rgba(13, 14, 19, 0.589);
+    --surface-nav-active: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.09),
+      rgba(255, 255, 255, 0.035)
+    );
+    --surface-dashboard-card: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.024)
+    );
+
+    --shadow-panel:
+      0 24px 60px rgba(0, 0, 0, 0.22),
+      inset 0 1px rgba(255, 255, 255, 0.05);
+    --shadow-nav-active: inset 0 0 0 1px rgba(255, 255, 255, 0.055);
+    --shadow-task-card: inset 0 -40px 80px rgba(0, 0, 0, 0.2);
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    min-height: 100%;
+  }
+
+  body {
+    min-height: 100%;
+    margin: 0;
+    font-family: var(--font-sans);
+  }
+}
+
+@layer utilities {
+  .taskly-bg-main {
+    background: var(--surface-page);
+  }
+
+  .taskly-bg-sub {
+    background: var(--surface-panel);
+  }
+
+  .taskly-bg-aside {
+    background: var(--surface-sidebar);
+  }
+
+  .taskly-li-bg {
+    background: var(--surface-nav-active);
+  }
+
+  .taskly-bg-dashcards {
+    background: var(--surface-dashboard-card);
+  }
+
+  .taskly-border {
+    border: 1px solid var(--color-border-soft);
+  }
+
+  .taskly-border-left {
+    border-left: 1px solid var(--color-border-soft);
+  }
+
+  .taskly-border-right {
+    border-right: 1px solid var(--color-border-soft);
+  }
+
+  .taskly-border-top {
+    border-top: 1px solid var(--color-border-soft);
+  }
+
+  .taskly-border-bottom {
+    border-bottom: 1px solid var(--color-border-soft);
+  }
+
+  .taskly-shadow {
+    box-shadow: var(--shadow-panel);
+  }
+
+  .taskly-shadow-li {
+    box-shadow: var(--shadow-nav-active);
+  }
+
+  .taskly-shadow-task {
+    box-shadow: var(--shadow-task-card);
+  }
+}
+
+/* Custom Design */
+
+.taskly-after-card::after{
+    position: absolute;
+    content: "";
+    left: 18px;
+    right: 18px;
+    bottom: -18px;
+    height: 30px;
+    border-radius: 100%;
+    filter: blur(18px);
+    opacity: .65;
+}
+
+/* Variant Colors */
+
+.taskly-after-card.purple::after {
+    background: #8b5cf6;
+}
+
+.taskly-after-card.cyan::after {
+    background: #06b6d4;
+}
+
+.taskly-after-card.orange::after {
+    background: #f97316;
+}
