@@ -65,6 +65,7 @@
     min-height: 100%;
     margin: 0;
     font-family: var(--font-sans);
+    color: white;
   }
 }
 
@@ -119,6 +120,22 @@
 
   .taskly-shadow-task {
     box-shadow: var(--shadow-task-card);
+  }
+
+  .taskly-button {
+  background: linear-gradient(135deg, #8b5cf6, #06b6d4, #8b5cf6);
+    background-size: 200% 200%;
+    background-position: left center;
+    box-shadow: 0 12px 28px rgba(139, 92, 246, 0.24);
+    transition:
+      background-position 300ms ease,
+      box-shadow 300ms ease,
+      transform 300ms ease;
+    &:hover{
+        background-position: right center;
+          box-shadow: 0 16px 34px rgba(6, 182, 212, 0.28);
+          transform: translateY(-1px);
+    }
   }
 }
 

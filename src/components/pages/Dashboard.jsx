@@ -45,9 +45,24 @@ const Dashboard = () => {
                     )
                 })}
             </div>
-            <div>
-                <div>
+            <div className="flex flex-col md:flex-row gap-6 w-full px-6">
+                <div className="taskly-bg-sub rounded-3xl border border-white/5 taskly-shadow overflow-hidden p-6 w-3/5">
+                    <h3 className="text-xl font-bold tracking-wide text-white mb-4">
+                        Task List
+                    </h3>
 
+                    <div className="p-6 mb-5 h-14 flex items-center gap-4 rounded-2xl border border-white/5 bg-white/10">
+                        <span className="text-2xl text-purple-500">
+                            +
+                        </span>
+                        <input type="text" placeholder="Add a new task..." className="flex flex-1 bg-transparent border-none outline-none text-white text-sm" />
+                        <button className="taskly-button rounded-xl px-4 py-2 cursor-pointer text-white font-bold text-sm" >
+                            Add Task
+                        </button>
+                    </div>
+                    <div>
+
+                    </div>
                 </div>
                 <div>
 
