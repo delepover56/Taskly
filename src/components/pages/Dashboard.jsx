@@ -1,24 +1,62 @@
+import { useState } from "react"
+
 const Dashboard = () => {
+    const [inputTask, setInputTask] = useState("")
+    const [tasks, setTasks] = useState([]);
+    const [nextID, setNextID] = useState(1);
+
+    const handleAddTask = (event) => {
+        event.preventDefault();
+
+        if (inputTask.trim() === "") return
+
+        const now = new Date();
+        const date = now.toLocaleTimeString("en-GB", {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+        })
+
+        const newTask = {
+            id: nextID,
+            task: inputTask.trim(),
+            date: `Today - ${date}`,
+            isDone: false,
+        }
+
+        setTasks((prevTasks) => [newTask, ...prevTasks]);
+        setNextID((prevID) => prevID + 1);
+        setInputTask("");
+    }
+
+    const handleToggleTask = (taskID) => {
+        setTasks((prevTasks) =>
+            prevTasks.map((task) =>
+                task.id === taskID ? { ...task, isDone: !task.isDone } : task
+            )
+        );
+    }
+
     const boxInfo = [
         {
             id: 1,
             emoji: "📌",
             name: "Total Tasks",
-            count: 12,
+            count: tasks.length,
             variant: "purple"
         },
         {
             id: 2,
             emoji: "✅",
             name: "Completed",
-            count: 8,
+            count: tasks.filter((task) => task.isDone).length,
             variant: "cyan"
         },
         {
             id: 3,
             emoji: "⌛",
             name: "Pending",
-            count: 4,
+            count: tasks.filter((task) => !task.isDone).length,
             variant: "orange"
         }
     ]
@@ -51,17 +89,67 @@ const Dashboard = () => {
                         Task List
                     </h3>
 
-                    <div className="p-6 mb-5 h-14 flex items-center gap-4 rounded-2xl border border-white/5 bg-white/10">
+                    <form
+                        onSubmit={handleAddTask}
+                        className="p-6 mb-5 h-14 flex items-center gap-4 rounded-2xl border border-white/5 bg-white/10"
+                    >
                         <span className="text-2xl text-purple-500">
                             +
                         </span>
-                        <input type="text" placeholder="Add a new task..." className="flex flex-1 bg-transparent border-none outline-none text-white text-sm" />
-                        <button className="taskly-button rounded-xl px-4 py-2 cursor-pointer text-white font-bold text-sm" >
+                        <input
+                            value={inputTask}
+                            onChange={(e) => setInputTask(e.target.value)}
+                            type="text"
+                            placeholder="Add a new task..."
+                            className="flex flex-1 bg-transparent border-none outline-none text-white text-sm"
+                        />
+                        <button
+                            type="submit"
+                            className="taskly-button rounded-xl px-4 py-2 cursor-pointer text-white font-bold text-sm"
+                        >
                             Add Task
                         </button>
-                    </div>
-                    <div>
+                    </form>
 
+                    <div className="task-lists flex flex-col gap-3">
+                        {tasks.map((task) => {
+                            return (
+                                <div
+                                    key={task.id}
+                                    className="group flex items-center gap-4 rounded-3xl border border-white/5 bg-black/20 p-5 transition-all duration-300 hover:border-white/15 hover:bg-white/8 hover:shadow-[inset_0_1px_rgba(255,255,255,0.06)]"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        id={`task-${task.id}`}
+                                        checked={task.isDone}
+                                        onChange={() => handleToggleTask(task.id)}
+                                        className="taskly-checkbox shrink-0"
+                                    />
+
+                                    <label
+                                        htmlFor={`task-${task.id}`}
+                                        className="flex flex-1 cursor-pointer flex-col"
+                                    >
+                                        <span
+                                            className={`text-sm font-bold transition-all duration-300 ${task.isDone ? "text-slate-500 line-through decoration-slate-500" : "text-white"}`}
+                                        >
+                                            {task.task}
+                                        </span>
+                                        <span className="mt-2 text-xs font-medium text-slate-400">
+                                            {task.date}
+                                        </span>
+                                    </label>
+
+                                    <button
+                                        type="button"
+                                        aria-label="Task options"
+                                        className="rounded-lg px-2 py-1 text-xl leading-none text-slate-400 opacity-80 transition-all duration-300 hover:bg-white/10 hover:text-white group-hover:opacity-100"
+                                    >
+                                        ...
+                                    </button>
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
                 <div>
