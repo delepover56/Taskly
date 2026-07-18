@@ -1,5 +1,7 @@
 import React from 'react';
 
+
+
 const Badge = ({ children, variant = 'default' }) => {
     const styles = {
         default: 'bg-slate-900 text-white',
