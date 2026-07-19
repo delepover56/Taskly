@@ -1,6 +1,6 @@
 import { cn } from '@/lib/cn'
 
-const Input = ({ className, ...props }) => {
+const Input = ({ className, ...InputProps }) => {
     return (
         <input
             className={cn(
@@ -12,7 +12,7 @@ const Input = ({ className, ...props }) => {
                 'aria-invalid:border-danger aria-invalid:focus:border-danger aria-invalid:focus:ring-danger/10',
                 className,
             )}
-            {...props}
+            {...InputProps}
         />
     )
 }
