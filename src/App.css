@@ -1,0 +1,17 @@
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.app-shell h1 {
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+.app-shell p {
+  margin: 0;
+  color: #475569;
+}
