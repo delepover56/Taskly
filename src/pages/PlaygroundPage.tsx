@@ -50,7 +50,7 @@ const PlaygroundPage = () => {
                             Saving...
                         </Button>
                     </div>
-                </Card >
+                </Card>
 
                 <Card className="p-6">
                     <div className="mb-5">
@@ -88,7 +88,7 @@ const PlaygroundPage = () => {
                             aria-invalid
                         />
                     </div>
-                </Card >
+                </Card>
             </div>
         </main>
     )

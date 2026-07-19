@@ -3,7 +3,7 @@ import { cn } from '@/lib/cn'
 
 type InputProps = ComponentPropsWithoutRef<'input'>
 
-const Input = ({ className, ...InputProps }: InputProps) => {
+const Input = ({ className, ...props }: InputProps) => {
     return (
         <input
             className={cn(
@@ -15,7 +15,7 @@ const Input = ({ className, ...InputProps }: InputProps) => {
                 'aria-invalid:border-danger aria-invalid:focus:border-danger aria-invalid:focus:ring-danger/10',
                 className,
             )}
-            {...InputProps}
+            {...props}
         />
     )
 }
