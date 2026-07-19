@@ -1,4 +1,3 @@
-import type { ComponentPropsWithoutRef } from 'react'
 import { cn } from '@/lib/cn'
 
 const variants = {
@@ -18,11 +17,6 @@ const sizes = {
   lg: 'h-11 px-5 text-sm',
 }
 
-type ButtonProps = ComponentPropsWithoutRef<'button'> & {
-  variant?: keyof typeof variants
-  size?: keyof typeof sizes
-}
-
 const Button = ({
   children,
   variant = 'primary',
@@ -30,7 +24,7 @@ const Button = ({
   className,
   type = 'button',
   ...props
-}: ButtonProps) => {
+}) => {
   return (
     <button
       type={type}

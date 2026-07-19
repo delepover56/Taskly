@@ -1,9 +1,6 @@
-import type { ComponentPropsWithoutRef } from 'react'
 import { cn } from '@/lib/cn'
 
-type InputProps = ComponentPropsWithoutRef<'input'>
-
-const Input = ({ className, ...props }: InputProps) => {
+const Input = ({ className, ...props }) => {
     return (
         <input
             className={cn(
