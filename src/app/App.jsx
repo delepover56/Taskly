@@ -1,5 +1,3 @@
-import React from 'react'
-
 const App = () => {
   return (
     <main className="grid min-h-screen place-items-center bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-slate-50">
