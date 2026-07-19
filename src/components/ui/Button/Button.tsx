@@ -29,7 +29,7 @@ const Button = ({
   size = 'md',
   className,
   type = 'button',
-  ...props
+  ...ButtonProps
 }: ButtonProps) => {
   return (
     <button
@@ -42,7 +42,7 @@ const Button = ({
         sizes[size],
         className,
       )}
-      {...props}
+      {...ButtonProps}
     >
       {children}
     </button>

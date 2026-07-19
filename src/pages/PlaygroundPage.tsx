@@ -1,5 +1,6 @@
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import Card from '@/components/ui/Card'
 
 const PlaygroundPage = () => {
     return (
@@ -19,7 +20,7 @@ const PlaygroundPage = () => {
                     </p>
                 </header>
 
-                <section className="rounded-card border border-border bg-surface p-6 shadow-card backdrop-blur-lg">
+                <Card className="p-6">
                     <div className="mb-5">
                         <h2 className="font-display text-lg font-bold text-foreground">
                             Buttons
@@ -49,9 +50,9 @@ const PlaygroundPage = () => {
                             Saving...
                         </Button>
                     </div>
-                </section>
+                </Card >
 
-                <section className="rounded-card border border-border bg-surface p-6 shadow-card backdrop-blur-lg">
+                <Card className="p-6">
                     <div className="mb-5">
                         <h2 className="font-display text-lg font-bold text-foreground">
                             Inputs
@@ -87,7 +88,7 @@ const PlaygroundPage = () => {
                             aria-invalid
                         />
                     </div>
-                </section>
+                </Card >
             </div>
         </main>
     )
