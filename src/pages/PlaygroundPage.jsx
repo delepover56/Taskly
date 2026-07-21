@@ -1,6 +1,8 @@
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Card from '@/components/ui/Card'
+import SearchField from '@/components/ui/SearchField'
+
 
 const PlaygroundPage = () => {
     return (
@@ -86,6 +88,33 @@ const PlaygroundPage = () => {
                             placeholder="Invalid input"
                             aria-label="Invalid input"
                             aria-invalid
+                        />
+                    </div>
+                </Card>
+
+                <Card className="p-6">
+                    <div className="mb-5">
+                        <h2 className="font-display text-lg font-bold text-foreground">
+                            Search Fields
+                        </h2>
+
+                        <p className="mt-1 text-sm text-muted">
+                            Search controls with configurable placeholders and states.
+                        </p>
+                    </div>
+
+                    <div className="grid max-w-sm gap-3">
+                        <SearchField aria-label="Search tasks" />
+
+                        <SearchField
+                            placeholder="Search completed tasks"
+                            aria-label="Search completed tasks"
+                        />
+
+                        <SearchField
+                            placeholder="Search unavailable"
+                            aria-label="Search unavailable"
+                            disabled
                         />
                     </div>
                 </Card>
