@@ -1,42 +1,42 @@
 import { z } from 'zod'
 
 export const taskCategorySchema = z.enum([
-    "work",
-    "personal",
-    "study",
-    "shopping",
-    "health",
-    "finance",
+    "Work",
+    "Personal",
+    "Study",
+    "Shopping",
+    "Health",
+    "Finance",
 ])
 
 export const taskPrioritySchema = z.enum([
-    "high",
-    "medium",
-    "low",
+    "High",
+    "Medium",
+    "Low",
 ])
 
 export const taskTagSchema = z.enum([
     // Context & Environment
-    'desk',
-    'mobile',
-    'errand',
-    'home',
-    'school',
+    'Desk',
+    'Mobile',
+    'Errand',
+    'Home',
+    'School',
 
     // Effort & Energy
-    'deep_work',
-    'quick_win',
-    'waiting',
+    'Deep_Work',
+    'Quick_Win',
+    'Waiting',
 
     // Nature of Work
-    'creative',
-    'technical',
-    'admin',
-    'review',
+    'Creative',
+    'Technical',
+    'Admin',
+    'Review',
 
     // Collaboration
-    'team',
-    'solo'
+    'Team',
+    'Solo'
 ]);
 
 export const taskTagsSchema = z.array(taskTagSchema).min(1, "A tag is required").max(3, "A maximum of 3 tags are allowed");

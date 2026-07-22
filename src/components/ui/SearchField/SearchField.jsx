@@ -28,4 +28,4 @@ const SearchField = ({
     )
 }
 
-export default SearchField
+export default SearchField;
