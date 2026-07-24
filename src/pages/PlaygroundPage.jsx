@@ -2,6 +2,7 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Card from '@/components/ui/Card'
 import SearchField from '@/components/ui/SearchField'
+import Badge from '@/components/ui/Badge'
 
 
 const PlaygroundPage = () => {
@@ -116,6 +117,26 @@ const PlaygroundPage = () => {
                             aria-label="Search unavailable"
                             disabled
                         />
+                    </div>
+                </Card>
+
+                <Card className="p-6">
+                    <div className="mb-5">
+                        <h2 className="font-display text-lg font-bold text-foreground">
+                            Badges
+                        </h2>
+
+                        <p className="mt-1 text-sm text-muted">
+                            Compact labels for categories, priorities, tags, and statuses.
+                        </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-3">
+                        <Badge>Work</Badge>
+                        <Badge varient="primary">Desk</Badge>
+                        <Badge varient="success">Completed</Badge>
+                        <Badge varient="warning">Medium</Badge>
+                        <Badge varient="danger">High</Badge>
                     </div>
                 </Card>
             </div>
