@@ -1,9 +1,8 @@
-import PlaygroundPage from '@/pages/PlaygroundPage'
+import { RouterProvider } from 'react-router'
+import router from '@/app/router'
 
 const App = () => {
-  return (
-    <PlaygroundPage />
-  )
+    return <RouterProvider router={router} />
 }
 
 export default App
