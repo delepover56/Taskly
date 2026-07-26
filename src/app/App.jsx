@@ -1,8 +1,7 @@
-import { RouterProvider } from 'react-router'
-import router from '@/app/router'
+import PlaygroundPage from '@/pages/PlaygroundPage'
 
 const App = () => {
-    return <RouterProvider router={router} />
+    return <PlaygroundPage />
 }
 
 export default App
