@@ -1,1 +1,1 @@
-// Export AppLayout here after rebuilding it.
+﻿export { default } from './AppLayout'

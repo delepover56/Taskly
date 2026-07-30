@@ -1,4 +1,3 @@
-// Rebuild Sidebar here.
 import {
     Archive,
     CalendarDays,
