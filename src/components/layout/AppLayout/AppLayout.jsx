@@ -20,6 +20,7 @@ const AppLayout = () => {
     const navigate = useNavigate()
     const [globalQuery, setGlobalQuery] = useState('')
     const [mobileOpen, setMobileOpen] = useState(false)
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(() => readPreference('taskly-sidebar-collapsed', 'false') === 'true')
     const [formState, setFormState] = useState(null)
     const [deleteTarget, setDeleteTarget] = useState(null)
     const [settingsOpen, setSettingsOpen] = useState(false)
@@ -39,6 +40,10 @@ const AppLayout = () => {
         document.documentElement.dataset.density = density
         localStorage.setItem('taskly-density', density)
     }, [density])
+
+    useEffect(() => {
+        localStorage.setItem('taskly-sidebar-collapsed', String(sidebarCollapsed))
+    }, [sidebarCollapsed])
 
     useEffect(() => {
         const handleKeys = (event) => {
@@ -91,7 +96,7 @@ const AppLayout = () => {
 
     return (
         <div className="flex min-h-screen bg-background">
-            <Sidebar className="sticky top-0 hidden h-screen lg:flex" />
+            <Sidebar className="sticky top-0 hidden h-screen lg:flex" collapsible collapsed={sidebarCollapsed} onCollapsedChange={setSidebarCollapsed} />
             <MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} />
             <div className="min-w-0 flex-1">
                 <Topbar searchData={globalQuery} onSearchChange={(event) => setGlobalQuery(event.target.value)} onMenuOpen={() => setMobileOpen(true)} themeData={theme} onToggleTheme={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')} onAddTask={openCreate} onOpenSettings={() => setSettingsOpen(true)} user={user} onOpenProfile={() => navigate('/profile')} onOpenLogin={() => navigate('/login')} onOpenSignUp={() => navigate('/signup')} onLogout={() => { logout(); navigate('/login'); toast.success('You have been logged out.') }} />
