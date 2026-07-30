@@ -1,4 +1,4 @@
-﻿import { Navigate, useLocation } from 'react-router'
+import { Navigate, useLocation } from 'react-router'
 import { useAuthStore } from '@/features/auth/store/useAuthStore'
 
 export const RequireAuth = ({ children }) => {
@@ -16,7 +16,7 @@ export const GuestOnly = ({ children }) => {
     const user = useAuthStore((state) => state.user)
 
     if (user) {
-        return <Navigate to="/profile" replace />
+        return <Navigate to="/" replace />
     }
 
     return children

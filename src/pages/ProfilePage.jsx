@@ -1,5 +1,5 @@
 ﻿import { useState } from 'react'
-import { LogOut, Mail, Save, UserRound } from 'lucide-react'
+import { Camera, LogOut, Mail, Save, Trash2, UserRound } from 'lucide-react'
 import { toast } from 'sonner'
 import PageContainer from '@/components/layout/PageContainer'
 import Button from '@/components/ui/Button'
@@ -28,6 +28,28 @@ const ProfilePage = () => {
         toast.success('Profile updated.')
     }
 
+    const handleAvatarChange = (event) => {
+        const file = event.target.files?.[0]
+        if (!file) return
+        if (!file.type.startsWith('image/')) {
+            toast.error('Choose an image file.')
+            return
+        }
+        if (file.size > 2 * 1024 * 1024) {
+            toast.error('Profile pictures must be smaller than 2 MB.')
+            return
+        }
+
+        const reader = new FileReader()
+        reader.onload = () => {
+            updateProfile({ avatarSrc: reader.result })
+            toast.success('Profile picture updated.')
+        }
+        reader.onerror = () => toast.error('The selected image could not be read.')
+        reader.readAsDataURL(file)
+        event.target.value = ''
+    }
+
     return (
         <main>
             <PageContainer className="py-8">
@@ -35,6 +57,11 @@ const ProfilePage = () => {
                 <div className="mt-6 grid items-start gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
                     <Card className="p-6 text-center">
                         <span className="mx-auto grid size-24 place-items-center overflow-hidden rounded-full bg-control-muted text-muted">{user.avatarSrc ? <img className="size-full object-cover" src={user.avatarSrc} alt="" /> : <UserRound className="size-10" />}</span>
+                        <div className="mt-4 flex flex-wrap justify-center gap-2">
+                            <label className="inline-flex h-8 cursor-pointer items-center gap-2 rounded-control bg-control-muted px-3 text-xs font-semibold text-body transition hover:text-foreground"><Camera className="size-3.5" />{user.avatarSrc ? 'Change photo' : 'Add photo'}<input className="sr-only" type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleAvatarChange} /></label>
+                            {user.avatarSrc && <button className="inline-flex h-8 items-center gap-2 rounded-control px-3 text-xs font-semibold text-danger hover:bg-danger/10" type="button" onClick={() => { updateProfile({ avatarSrc: null }); toast.success('Profile picture removed.') }}><Trash2 className="size-3.5" />Remove</button>}
+                        </div>
+                        <p className="mt-2 text-[10px] text-muted">PNG, JPG, WebP, or GIF. Maximum 2 MB.</p>
                         <h2 className="mt-4 font-display text-lg font-bold text-foreground">{user.name}</h2><p className="mt-1 text-xs text-muted">{user.email}</p>
                         <div className="mt-5 grid grid-cols-2 gap-2"><div className="rounded-xl bg-control p-3"><strong className="font-display text-xl text-foreground">{active}</strong><span className="block text-[10px] text-muted">Open tasks</span></div><div className="rounded-xl bg-control p-3"><strong className="font-display text-xl text-foreground">{completed}</strong><span className="block text-[10px] text-muted">Completed</span></div></div>
                         <Button className="mt-5 w-full" variant="secondary" onClick={logout}><LogOut className="size-4" />Log out</Button>

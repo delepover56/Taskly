@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { ArrowRight, LockKeyhole, Mail, UserRound } from 'lucide-react'
 import Button from '@/components/ui/Button'
@@ -23,7 +23,7 @@ const SignupPage = () => {
             return
         }
         signUp(form)
-        navigate('/profile', { replace: true })
+        navigate('/', { replace: true })
     }
 
     const update = (field, value) => setForm((current) => ({ ...current, [field]: value }))

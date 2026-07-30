@@ -1,5 +1,5 @@
-﻿import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router'
 import { ArrowRight, LockKeyhole, Mail } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -8,7 +8,6 @@ import tasklyLogo from '@/assets/logos/Taskly-Logo.svg'
 
 const LoginPage = () => {
     const navigate = useNavigate()
-    const location = useLocation()
     const login = useAuthStore((state) => state.login)
     const [form, setForm] = useState({ email: '', password: '' })
     const [error, setError] = useState('')
@@ -20,7 +19,7 @@ const LoginPage = () => {
             return
         }
         login(form)
-        navigate(location.state?.from || '/', { replace: true })
+        navigate('/', { replace: true })
     }
 
     return (
