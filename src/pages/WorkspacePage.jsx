@@ -7,12 +7,12 @@ import Card from '@/components/ui/Card'
 import { toDateKey } from '@/lib/date'
 
 const viewCopy = {
-    dashboard: { title: 'Good morning, Taha ✦', description: "Here's what’s on your plate today.", listTitle: "Today's focus" },
+    dashboard: { title: 'Good morning, Taha âœ¦', description: "Here's whatâ€™s on your plate today.", listTitle: "Today's focus" },
     today: { title: 'Today', description: 'A clear plan for a productive day.', listTitle: "Today's tasks" },
     upcoming: { title: 'Upcoming', description: 'Look ahead and stay prepared.', listTitle: 'Coming up' },
     important: { title: 'Important', description: 'The work that deserves your attention.', listTitle: 'High priority' },
     completed: { title: 'Completed', description: 'Celebrate your progress.', listTitle: 'Completed tasks' },
-    archived: { title: 'Archived', description: 'Tasks you’ve tucked away.', listTitle: 'Archived tasks' },
+    archived: { title: 'Archived', description: 'Tasks youâ€™ve tucked away.', listTitle: 'Archived tasks' },
 }
 
 const StatCard = ({ icon: Icon, label, value, note, tone }) => (
@@ -66,8 +66,8 @@ const WorkspacePage = ({ view }) => {
                     </section>
                 )}
 
-                <div className={`grid gap-5 ${isDashboard ? 'xl:grid-cols-[minmax(0,1fr)_280px]' : ''}`}>
-                    <TaskWorkspace title={globalQuery ? 'Search results' : copy.listTitle} description={globalQuery ? `Matching “${globalQuery}” across all tasks` : undefined} tasks={visibleTasks} globalQuery={globalQuery} allowCompletedToggle={view === 'dashboard' || view === 'today'} onAddTask={openCreate} onToggle={toggleTask} onEdit={openEdit} onArchive={archiveTask} onRestore={restoreTask} onDelete={requestDelete} />
+                <div className={`grid items-start gap-5 ${isDashboard ? 'xl:grid-cols-[minmax(0,1fr)_280px]' : ''}`}>
+                    <TaskWorkspace title={globalQuery ? 'Search results' : copy.listTitle} description={globalQuery ? `Matching â€œ${globalQuery}â€ across all tasks` : undefined} tasks={visibleTasks} globalQuery={globalQuery} allowCompletedToggle={view === 'dashboard' || view === 'today'} onAddTask={openCreate} onToggle={toggleTask} onEdit={openEdit} onArchive={archiveTask} onRestore={restoreTask} onDelete={requestDelete} />
                     {isDashboard && <InsightsPanel tasks={tasks} />}
                 </div>
             </PageContainer>

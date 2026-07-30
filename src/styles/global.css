@@ -142,3 +142,18 @@
         background: rgb(14 165 233 / 25%);
     }
 }
+
+@layer components {
+    html[data-density="compact"] [data-task-item] {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    html[data-density="compact"] [data-task-description] {
+        display: none;
+    }
+
+    html[data-density="compact"] [data-task-meta] {
+        margin-top: 0.25rem;
+    }
+}
