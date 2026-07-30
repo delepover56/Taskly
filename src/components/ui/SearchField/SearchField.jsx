@@ -7,6 +7,7 @@ const SearchField = ({
     placeholder = 'Search Tasks',
     ...searchProps
 }) => {
+
     return (
         <div
             className={cn(
