@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server:dev": "npm --prefix server run dev",
+    "server:test": "npm --prefix server run test",
     "build": "vite build",
     "lint": "eslint .",
     "test": "vitest run",
