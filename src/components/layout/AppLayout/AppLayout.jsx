@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Outlet } from 'react-router'
 import { Plus, Trash2 } from 'lucide-react'
 import { Toaster, toast } from 'sonner'
@@ -64,9 +64,14 @@ const AppLayout = () => {
             toast.success('New task added.')
         }
     }
+    const deleteTargetId = deleteTarget?.id
+    const deleteTargetTitle = deleteTarget?.title
+
     const confirmDelete = () => {
-        store.deleteTask(deleteTarget.id)
-        toast.success(`“${deleteTarget.title}” deleted.`)
+        if (!deleteTargetId) return
+
+        store.deleteTask(deleteTargetId)
+        toast.success(`“${deleteTargetTitle}” deleted.`)
         setDeleteTarget(null)
     }
     const archiveTask = (id) => { store.archiveTask(id); toast.success('Task archived.') }

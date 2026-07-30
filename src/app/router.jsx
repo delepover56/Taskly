@@ -1,11 +1,13 @@
-﻿import { createBrowserRouter } from 'react-router'
+import { createBrowserRouter } from 'react-router'
 import AppLayout from '@/components/layout/AppLayout'
 import NotFoundPage from '@/pages/NotFoundPage'
+import RouteErrorPage from '@/pages/RouteErrorPage'
 import WorkspacePage from '@/pages/WorkspacePage'
 
 export const router = createBrowserRouter([
     {
         element: <AppLayout />,
+        errorElement: <RouteErrorPage />,
         children: [
             { index: true, element: <WorkspacePage view="dashboard" /> },
             { path: 'today', element: <WorkspacePage view="today" /> },
