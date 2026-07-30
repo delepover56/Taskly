@@ -1,9 +1,9 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { LogIn, LogOut, Moon, Settings, Sun, UserPlus, UserRound } from 'lucide-react'
 import IconButton from '@/components/ui/IconButton'
 import { cn } from '@/lib/cn'
 
-const ProfileMenu = ({ avatarSrc, isAuthenticated = false, themeData, onOpenProfile, onOpenLogin, onOpenSignUp, onOpenSettings, onToggleTheme, onLogout }) => {
+const ProfileMenu = ({ avatarSrc, userName, userEmail, isAuthenticated = false, themeData, onOpenProfile, onOpenLogin, onOpenSignUp, onOpenSettings, onToggleTheme, onLogout }) => {
     const [isOpen, setIsOpen] = useState(false)
     const isDarkMode = themeData === 'dark'
     const handleMenuAction = (callback) => {
@@ -22,8 +22,8 @@ const ProfileMenu = ({ avatarSrc, isAuthenticated = false, themeData, onOpenProf
                     <button className="fixed inset-0 z-30 cursor-default" type="button" aria-label="Close profile menu" onClick={() => setIsOpen(false)} />
                     <div className="absolute top-full right-0 z-40 mt-2 w-56 rounded-xl border border-border bg-card p-2 shadow-card" role="menu">
                         <div className="border-b border-border px-3 py-2.5">
-                            <p className="text-xs font-semibold text-foreground">{isAuthenticated ? 'Taha Ahmed' : 'Welcome to Taskly'}</p>
-                            <p className="mt-0.5 text-[11px] text-muted">{isAuthenticated ? 'taha@example.com' : 'Your focused workspace'}</p>
+                            <p className="text-xs font-semibold text-foreground">{isAuthenticated ? userName : 'Taskly account'}</p>
+                            <p className="mt-0.5 text-[11px] text-muted">{isAuthenticated ? userEmail : 'Log in or create an account'}</p>
                         </div>
                         <div className="py-1">
                             {isAuthenticated ? (

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Outlet } from 'react-router'
+import { Outlet, useNavigate } from 'react-router'
 import { Plus, Trash2 } from 'lucide-react'
 import { Toaster, toast } from 'sonner'
 import MobileDrawer from '@/components/layout/MobileDrawer'
@@ -9,6 +9,7 @@ import Topbar from '@/components/layout/Topbar'
 import TaskFormDialog from '@/components/tasks/TaskFormDialog'
 import Button from '@/components/ui/Button'
 import Dialog from '@/components/ui/Dialog'
+import { useAuthStore } from '@/features/auth/store/useAuthStore'
 import { useTaskStore } from '@/features/tasks/store/useTaskStore'
 
 const readPreference = (key, fallback) => {
@@ -16,6 +17,7 @@ const readPreference = (key, fallback) => {
 }
 
 const AppLayout = () => {
+    const navigate = useNavigate()
     const [globalQuery, setGlobalQuery] = useState('')
     const [mobileOpen, setMobileOpen] = useState(false)
     const [formState, setFormState] = useState(null)
@@ -25,6 +27,8 @@ const AppLayout = () => {
     const [density, setDensity] = useState(() => readPreference('taskly-density', 'comfortable'))
 
     const store = useTaskStore()
+    const user = useAuthStore((state) => state.user)
+    const logout = useAuthStore((state) => state.logout)
 
     useEffect(() => {
         document.documentElement.classList.toggle('dark', theme === 'dark')
@@ -44,12 +48,9 @@ const AppLayout = () => {
             }
             if (event.key.toLowerCase() === 'n' && !event.target.matches('input, textarea, select')) setFormState({ mode: 'create', task: null })
         }
-        const demoAuth = () => toast.info('Authentication will connect after the frontend phase.')
         document.addEventListener('keydown', handleKeys)
-        window.addEventListener('taskly-demo-auth', demoAuth)
         return () => {
             document.removeEventListener('keydown', handleKeys)
-            window.removeEventListener('taskly-demo-auth', demoAuth)
         }
     }, [])
 
@@ -71,7 +72,7 @@ const AppLayout = () => {
         if (!deleteTargetId) return
 
         store.deleteTask(deleteTargetId)
-        toast.success(`“${deleteTargetTitle}” deleted.`)
+        toast.success(`"${deleteTargetTitle}" deleted.`)
         setDeleteTarget(null)
     }
     const archiveTask = (id) => { store.archiveTask(id); toast.success('Task archived.') }
@@ -93,7 +94,7 @@ const AppLayout = () => {
             <Sidebar className="sticky top-0 hidden h-screen lg:flex" />
             <MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} />
             <div className="min-w-0 flex-1">
-                <Topbar searchData={globalQuery} onSearchChange={(event) => setGlobalQuery(event.target.value)} onMenuOpen={() => setMobileOpen(true)} themeData={theme} onToggleTheme={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')} onAddTask={openCreate} onOpenSettings={() => setSettingsOpen(true)} />
+                <Topbar searchData={globalQuery} onSearchChange={(event) => setGlobalQuery(event.target.value)} onMenuOpen={() => setMobileOpen(true)} themeData={theme} onToggleTheme={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')} onAddTask={openCreate} onOpenSettings={() => setSettingsOpen(true)} user={user} onOpenProfile={() => navigate('/profile')} onOpenLogin={() => navigate('/login')} onOpenSignUp={() => navigate('/signup')} onLogout={() => { logout(); navigate('/login'); toast.success('You have been logged out.') }} />
                 <Outlet context={outletContext} />
             </div>
 

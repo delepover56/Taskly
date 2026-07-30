@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { LayoutGrid, List, Plus, SearchX } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
@@ -36,7 +36,7 @@ const TaskWorkspace = ({ title, description, tasks, globalQuery, allowCompletedT
                 {allowCompletedToggle && <button className="text-xs font-semibold text-primary" type="button" onClick={() => setShowCompleted((value) => !value)}>{showCompleted ? 'Hide completed' : 'Show completed'}</button>}
             </div>
             <div className="grid gap-2 border-b border-border p-3 sm:grid-cols-[minmax(180px,1fr)_150px_145px_auto] sm:px-5">
-                <SearchField placeholder="Search tasks" value={query} onChange={(event) => setQuery(event.target.value)} />
+                <SearchField placeholder="Search this view" value={query} onChange={(event) => setQuery(event.target.value)} />
                 <Select aria-label="Filter category" value={category} onChange={(event) => setCategory(event.target.value)}><option>All</option>{taskCategorySchema.options.map((item) => <option key={item}>{item}</option>)}</Select>
                 <Select aria-label="Sort tasks" value={sort} onChange={(event) => setSort(event.target.value)}><option value="due">Due date</option><option value="priority">Priority</option><option value="created">Created date</option><option value="title">Alphabetical</option></Select>
                 <div className="hidden items-center gap-1 sm:flex"><span className="rounded-lg bg-primary/15 p-2 text-primary"><List className="size-4" /></span><span className="p-2 text-muted"><LayoutGrid className="size-4" /></span></div>
