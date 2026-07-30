@@ -23,7 +23,7 @@ const SignupPage = () => {
             return
         }
         signUp(form)
-        navigate('/', { replace: true })
+        navigate('/login', { replace: true, state: { accountCreated: true } })
     }
 
     const update = (field, value) => setForm((current) => ({ ...current, [field]: value }))

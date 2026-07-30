@@ -1,4 +1,4 @@
-﻿import { create } from 'zustand'
+import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 export const useAuthStore = create(
@@ -15,7 +15,7 @@ export const useAuthStore = create(
                     avatarSrc: null,
                     createdAt: new Date().toISOString(),
                 }
-                set({ account, user: account })
+                set({ account, user: null })
                 return account
             },
 
