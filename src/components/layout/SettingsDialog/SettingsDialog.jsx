@@ -16,12 +16,12 @@ const SettingsDialog = ({ open, onClose, theme, onThemeChange, density, onDensit
                     <label className="mt-4 grid gap-1.5 text-xs font-semibold text-body">Task density<Select value={density} onChange={(event) => onDensityChange(event.target.value)}><option value="comfortable">Comfortable</option><option value="compact">Compact</option></Select></label>
                 </section>
                 <section className="rounded-xl border border-border bg-control/60 p-4">
-                    <div className="flex items-center gap-3"><span className="rounded-lg bg-success/10 p-2 text-success"><BellRing className="size-4" /></span><div><h3 className="text-sm font-bold text-foreground">Notifications</h3><p className="text-[11px] text-muted">Due-date reminders are enabled.</p></div></div>
-                    <p className="mt-4 text-xs leading-5 text-muted">Browser notifications will connect when the backend and account system are added.</p>
+                    <div className="flex items-center gap-3"><span className="rounded-lg bg-success/10 p-2 text-success"><BellRing className="size-4" /></span><div><h3 className="text-sm font-bold text-foreground">Task alerts</h3><p className="text-[11px] text-muted">Built from your current task data.</p></div></div>
+                    <p className="mt-4 text-xs leading-5 text-muted">The notification menu highlights overdue work, tasks due today, and recent completions.</p>
                 </section>
                 <section className="rounded-xl border border-border bg-control/60 p-4">
-                    <div className="flex items-center gap-3"><span className="rounded-lg bg-warning/10 p-2 text-warning"><Database className="size-4" /></span><div><h3 className="text-sm font-bold text-foreground">Demo data</h3><p className="text-[11px] text-muted">Restore the original preview tasks.</p></div></div>
-                    <Button className="mt-4" variant="secondary" size="sm" onClick={onResetTasks}>Reset demo tasks</Button>
+                    <div className="flex items-center gap-3"><span className="rounded-lg bg-warning/10 p-2 text-warning"><Database className="size-4" /></span><div><h3 className="text-sm font-bold text-foreground">Task data</h3><p className="text-[11px] text-muted">Restore Taskly&apos;s starter task set.</p></div></div>
+                    <Button className="mt-4" variant="secondary" size="sm" onClick={onResetTasks}>Restore starter tasks</Button>
                 </section>
             </div>
         </Dialog>

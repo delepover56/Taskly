@@ -1,7 +1,8 @@
-import { useEffect, useId, useRef } from 'react'
+import { useId, useRef } from 'react'
 import { X } from 'lucide-react'
 import IconButton from '@/components/ui/IconButton'
 import { cn } from '@/lib/cn'
+import { gsap, prefersReducedMotion, useGSAP } from '@/lib/gsap'
 
 const Dialog = ({
     open,
@@ -17,19 +18,22 @@ const Dialog = ({
     const titleId = useId()
     const descriptionId = useId()
 
-    useEffect(() => {
+    useGSAP(() => {
         const dialog = dialogRef.current
 
         if (!dialog) return
 
         if (open && !dialog.open) {
             dialog.showModal()
+            if (!prefersReducedMotion()) {
+                gsap.fromTo(dialog.firstElementChild, { autoAlpha: 0, scale: 0.97 }, { autoAlpha: 1, scale: 1, duration: 0.26, ease: 'power3.out', clearProps: 'transform' })
+            }
         }
 
         if (!open && dialog.open) {
             dialog.close()
         }
-    }, [open])
+    }, { scope: dialogRef, dependencies: [open] })
 
     const handleCancel = (event) => {
         event.preventDefault()
@@ -47,14 +51,14 @@ const Dialog = ({
             ref={dialogRef}
             aria-labelledby={titleId}
             aria-describedby={description ? descriptionId : undefined}
-            className="fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-lg border-0 bg-transparent p-0 text-foreground backdrop:bg-slate-950/60 backdrop:backdrop-blur-sm"
+            className="fixed inset-0 m-auto max-h-none w-[calc(100%-2rem)] max-w-lg overflow-visible border-0 bg-transparent p-0 text-foreground backdrop:bg-slate-950/60 backdrop:backdrop-blur-sm"
             onCancel={handleCancel}
             onClick={handleBackdropClick}
             {...DialogProps}
         >
             <div
                 className={cn(
-                    'overflow-hidden rounded-card border border-border bg-card shadow-card',
+                    'flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden rounded-card border border-border bg-card shadow-card',
                     className,
                 )}
             >
@@ -84,7 +88,7 @@ const Dialog = ({
                     </IconButton>
                 </header>
 
-                <div className="px-5 py-4">
+                <div className="overflow-y-auto px-5 py-4">
                     {children}
                 </div>
 

@@ -1,32 +1,68 @@
 ﻿import { useState } from 'react'
-import { Bell, CalendarClock, CheckCircle2, Sparkles } from 'lucide-react'
+import { AlertTriangle, Bell, CalendarClock, CheckCircle2 } from 'lucide-react'
+import { useEffect, useMemo, useRef } from 'react'
 import IconButton from '@/components/ui/IconButton'
+import { toDateKey } from '@/lib/date'
+import { gsap, prefersReducedMotion, useGSAP } from '@/lib/gsap'
 
-const initialNotifications = [
-    { id: 'due', title: 'Tasks due today', message: 'Review your Today list before the day ends.', time: '12 min ago', icon: CalendarClock, read: false },
-    { id: 'progress', title: 'Progress saved', message: 'Your latest task updates are stored locally.', time: '1 hour ago', icon: CheckCircle2, read: false },
-    { id: 'tip', title: 'Planning tip', message: 'Choose one high-priority task before adding more.', time: 'Yesterday', icon: Sparkles, read: false },
-]
-
-const NotificationMenu = () => {
+const NotificationMenu = ({ tasks = [] }) => {
     const [isOpen, setIsOpen] = useState(false)
-    const [notifications, setNotifications] = useState(initialNotifications)
-    const unreadNotifications = notifications.filter((item) => !item.read)
+    const menuRef = useRef(null)
+    const panelRef = useRef(null)
+    const [readIds, setReadIds] = useState([])
+    const notifications = useMemo(() => {
+        const today = toDateKey()
+        const activeTasks = tasks.filter((task) => !task.archived)
+        const overdue = activeTasks.filter((task) => !task.completed && task.dueDate < today)
+        const dueToday = activeTasks.filter((task) => !task.completed && task.dueDate === today)
+        const recentlyCompleted = activeTasks
+            .filter((task) => task.completed)
+            .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+            .slice(0, 3)
+        const items = []
+
+        if (overdue.length) items.push({ id: `overdue-${overdue.length}`, title: `${overdue.length} overdue task${overdue.length === 1 ? '' : 's'}`, message: 'Review overdue work and update its due date or status.', time: 'Needs attention', icon: AlertTriangle })
+        if (dueToday.length) items.push({ id: `today-${today}-${dueToday.length}`, title: `${dueToday.length} task${dueToday.length === 1 ? '' : 's'} due today`, message: 'Open the Today page to review what remains.', time: 'Due today', icon: CalendarClock })
+        recentlyCompleted.forEach((task) => items.push({ id: `completed-${task.id}-${task.updatedAt}`, title: 'Task completed', message: task.title, time: 'Recently updated', icon: CheckCircle2 }))
+        return items
+    }, [tasks])
+    const unreadNotifications = notifications.filter((item) => !readIds.includes(item.id))
     const unread = unreadNotifications.length
 
-    const markRead = (id) => setNotifications((current) => current.map((item) => item.id === id ? { ...item, read: true } : item))
-    const markAllRead = () => setNotifications((current) => current.map((item) => ({ ...item, read: true })))
+    const markRead = (id) => setReadIds((current) => current.includes(id) ? current : [...current, id])
+    const markAllRead = () => setReadIds((current) => [...new Set([...current, ...notifications.map((item) => item.id)])])
+
+    useEffect(() => {
+        if (!isOpen) return
+
+        const closeOutside = (event) => {
+            if (!menuRef.current?.contains(event.target)) setIsOpen(false)
+        }
+        const closeOnEscape = (event) => {
+            if (event.key === 'Escape') setIsOpen(false)
+        }
+
+        document.addEventListener('pointerdown', closeOutside)
+        document.addEventListener('keydown', closeOnEscape)
+        return () => {
+            document.removeEventListener('pointerdown', closeOutside)
+            document.removeEventListener('keydown', closeOnEscape)
+        }
+    }, [isOpen])
+
+    useGSAP(() => {
+        if (!isOpen || !panelRef.current || prefersReducedMotion()) return
+        gsap.fromTo(panelRef.current, { autoAlpha: 0, y: -8, scale: 0.98 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.22, ease: 'power2.out', transformOrigin: 'top right' })
+    }, { scope: menuRef, dependencies: [isOpen] })
 
     return (
-        <div className="relative">
+        <div ref={menuRef} className="relative">
             <IconButton aria-label={`Notifications${unread ? `, ${unread} unread` : ''}`} aria-haspopup="menu" aria-expanded={isOpen} onClick={() => setIsOpen((current) => !current)}>
                 <Bell className="size-4.5" />
                 {unread > 0 && <span className="absolute top-1.5 right-1.5 size-2 rounded-full border-2 border-surface bg-danger" />}
             </IconButton>
             {isOpen && (
-                <>
-                    <button className="fixed inset-0 z-30 cursor-default" type="button" aria-label="Close notifications" onClick={() => setIsOpen(false)} />
-                    <section className="absolute top-full right-0 z-40 mt-2 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-border bg-card shadow-card" aria-label="Notifications">
+                    <section ref={panelRef} className="absolute top-full right-0 z-40 mt-2 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-border bg-card shadow-card" aria-label="Notifications">
                         <header className="flex items-center justify-between border-b border-border px-4 py-3"><div><h2 className="font-display text-sm font-bold text-foreground">Notifications</h2><p className="text-[10px] text-muted">{unread ? `${unread} unread update${unread === 1 ? '' : 's'}` : 'Nothing needs your attention'}</p></div>{unread > 0 && <button className="text-[11px] font-semibold text-primary" type="button" onClick={markAllRead}>Mark all as read</button>}</header>
                         {unread > 0 ? (
                             <div className="p-2">
@@ -41,7 +77,6 @@ const NotificationMenu = () => {
                             </div>
                         )}
                     </section>
-                </>
             )}
         </div>
     )

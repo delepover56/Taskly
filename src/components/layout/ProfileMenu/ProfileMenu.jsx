@@ -1,10 +1,13 @@
-import { useState } from 'react'
+﻿import { useEffect, useRef, useState } from 'react'
 import { LogIn, LogOut, Moon, Settings, Sun, UserPlus, UserRound } from 'lucide-react'
 import IconButton from '@/components/ui/IconButton'
 import { cn } from '@/lib/cn'
+import { gsap, prefersReducedMotion, useGSAP } from '@/lib/gsap'
 
-const ProfileMenu = ({ avatarSrc, userName, userEmail, isAuthenticated = false, themeData, onOpenProfile, onOpenLogin, onOpenSignUp, onOpenSettings, onToggleTheme, onLogout }) => {
+const ProfileMenu = ({ avatarSrc, userName, userUsername, userEmail, isAuthenticated = false, themeData, onOpenProfile, onOpenLogin, onOpenSignUp, onOpenSettings, onToggleTheme, onLogout }) => {
     const [isOpen, setIsOpen] = useState(false)
+    const menuRef = useRef(null)
+    const panelRef = useRef(null)
     const isDarkMode = themeData === 'dark'
     const handleMenuAction = (callback) => {
         callback?.()
@@ -12,18 +15,45 @@ const ProfileMenu = ({ avatarSrc, userName, userEmail, isAuthenticated = false, 
     }
     const itemClassName = cn('flex h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-body', 'transition-colors hover:bg-control-muted hover:text-foreground')
 
+    useEffect(() => {
+        if (!isOpen) return
+
+        const closeOutside = (event) => {
+            if (!menuRef.current?.contains(event.target)) setIsOpen(false)
+        }
+        const closeOnEscape = (event) => {
+            if (event.key === 'Escape') setIsOpen(false)
+        }
+
+        document.addEventListener('pointerdown', closeOutside)
+        document.addEventListener('keydown', closeOnEscape)
+        return () => {
+            document.removeEventListener('pointerdown', closeOutside)
+            document.removeEventListener('keydown', closeOnEscape)
+        }
+    }, [isOpen])
+
+    useGSAP(() => {
+        if (!isOpen || !panelRef.current || prefersReducedMotion()) return
+        gsap.fromTo(panelRef.current, { autoAlpha: 0, y: -8, scale: 0.98 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.22, ease: 'power2.out', transformOrigin: 'top right' })
+    }, { scope: menuRef, dependencies: [isOpen] })
+
     return (
-        <div className="relative">
+        <div ref={menuRef} className="relative">
             <IconButton className="overflow-hidden rounded-full bg-control-muted text-muted hover:text-foreground" aria-label="Open profile menu" aria-haspopup="menu" aria-expanded={isOpen} onClick={() => setIsOpen((current) => !current)}>
                 {avatarSrc ? <img className="size-full object-cover" src={avatarSrc} alt="" /> : <UserRound className="size-[18px]" />}
             </IconButton>
             {isOpen && (
-                <>
-                    <button className="fixed inset-0 z-30 cursor-default" type="button" aria-label="Close profile menu" onClick={() => setIsOpen(false)} />
-                    <div className="absolute top-full right-0 z-40 mt-2 w-56 rounded-xl border border-border bg-card p-2 shadow-card" role="menu">
-                        <div className="border-b border-border px-3 py-2.5">
-                            <p className="text-xs font-semibold text-foreground">{isAuthenticated ? userName : 'Taskly account'}</p>
-                            <p className="mt-0.5 text-[11px] text-muted">{isAuthenticated ? userEmail : 'Log in or create an account'}</p>
+                    <div ref={panelRef} className="absolute top-full right-0 z-40 mt-2 w-56 rounded-xl border border-border bg-card p-2 shadow-card" role="menu">
+                        <div className="flex items-center gap-3 border-b border-border px-3 py-2.5">
+                            <span className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-full bg-control-muted text-muted">
+                                {avatarSrc ? <img className="size-full object-cover" src={avatarSrc} alt="" /> : <UserRound className="size-5" />}
+                            </span>
+                            <div className="min-w-0">
+                                <p className="truncate text-xs font-semibold text-foreground">{isAuthenticated ? userName : 'Taskly account'}</p>
+                                {isAuthenticated && <p className="mt-0.5 truncate text-[11px] font-semibold text-primary">@{userUsername}</p>}
+                                <p className="mt-0.5 truncate text-[11px] text-muted">{isAuthenticated ? userEmail : 'Log in or create an account'}</p>
+                            </div>
                         </div>
                         <div className="py-1">
                             {isAuthenticated ? (
@@ -41,7 +71,6 @@ const ProfileMenu = ({ avatarSrc, userName, userEmail, isAuthenticated = false, 
                         </div>
                         {isAuthenticated && <button className={cn(itemClassName, 'border-t border-border text-danger')} type="button" role="menuitem" onClick={() => handleMenuAction(onLogout)}><LogOut className="size-4" /> Log out</button>}
                     </div>
-                </>
             )}
         </div>
     )

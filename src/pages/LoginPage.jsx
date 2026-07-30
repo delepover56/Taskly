@@ -1,17 +1,24 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { ArrowRight, LockKeyhole, Mail } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { useAuthStore } from '@/features/auth/store/useAuthStore'
 import tasklyLogo from '@/assets/logos/Taskly-Logo.svg'
+import { gsap, prefersReducedMotion, useGSAP } from '@/lib/gsap'
 
 const LoginPage = () => {
     const navigate = useNavigate()
+    const pageRef = useRef(null)
     const location = useLocation()
     const login = useAuthStore((state) => state.login)
     const [form, setForm] = useState({ email: '', password: '' })
     const [error, setError] = useState('')
+
+    useGSAP(() => {
+        if (prefersReducedMotion()) return
+        gsap.from('[data-auth-panel]', { autoAlpha: 0, scale: 0.99, duration: 0.4, stagger: 0.08, ease: 'power2.out' })
+    }, { scope: pageRef })
 
     const handleSubmit = (event) => {
         event.preventDefault()
@@ -24,13 +31,13 @@ const LoginPage = () => {
     }
 
     return (
-        <main className="grid min-h-screen bg-background lg:grid-cols-2">
-            <section className="hidden bg-primary/10 p-12 lg:flex lg:flex-col lg:justify-between">
+        <main ref={pageRef} className="grid min-h-screen overflow-hidden bg-background lg:grid-cols-2">
+            <section data-auth-panel className="hidden bg-primary/10 p-12 lg:flex lg:flex-col lg:justify-between">
                 <div className="flex items-center gap-3"><img className="size-10" src={tasklyLogo} alt="" /><span className="font-display text-2xl font-bold text-foreground">Taskly</span></div>
                 <div className="max-w-lg"><p className="text-xs font-bold tracking-[0.18em] text-primary uppercase">Welcome back</p><h1 className="mt-4 font-display text-5xl font-bold leading-tight text-foreground">Pick up where you left off.</h1><p className="mt-5 text-base leading-7 text-muted">Your priorities, due dates, and progress are ready when you are.</p></div>
-                <p className="text-xs text-muted">Frontend authentication preview</p>
+                <p className="text-xs text-muted">Your work stays organized in one place.</p>
             </section>
-            <section className="grid place-items-center px-5 py-12">
+            <section data-auth-panel className="grid place-items-center px-5 py-12">
                 <div className="w-full max-w-sm">
                     <div className="mb-8 flex items-center gap-3 lg:hidden"><img className="size-9" src={tasklyLogo} alt="" /><span className="font-display text-xl font-bold text-foreground">Taskly</span></div>
                     <h2 className="font-display text-3xl font-bold text-foreground">Log in</h2>

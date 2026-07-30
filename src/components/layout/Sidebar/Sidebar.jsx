@@ -3,7 +3,7 @@
     CalendarDays,
     CheckCircle2,
     LayoutDashboard,
-    PanelLeftClose,
+    ChevronsLeft,
     Star,
     Sun,
 } from 'lucide-react'
@@ -47,11 +47,13 @@ const Sidebar = ({
                     </button>
                 ) : (
                     <>
-                        <img className="size-9" src={tasklyLogo} alt="" />
-                        <span className="min-w-0 flex-1 font-display text-xl font-bold text-foreground">Taskly</span>
+                        <NavLink className="flex min-w-0 flex-1 items-center gap-3 rounded-lg" to="/" aria-label="Go to dashboard" onClick={onNavigate}>
+                            <img className="size-9" src={tasklyLogo} alt="" />
+                            <span className="font-display text-xl font-bold text-foreground">Taskly</span>
+                        </NavLink>
                         {collapsible && (
                             <IconButton size="sm" aria-label="Minimize sidebar" title="Minimize sidebar" onClick={() => onCollapsedChange?.(true)}>
-                                <PanelLeftClose className="size-4" />
+                                <ChevronsLeft className="size-4" />
                             </IconButton>
                         )}
                     </>

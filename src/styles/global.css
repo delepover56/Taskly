@@ -42,6 +42,9 @@
 
     --app-glow: #e0f7ff;
     --app-shadow: 0 12px 30px rgb(15 23 42 / 6%);
+    --app-scrollbar-track: #eef2f7;
+    --app-scrollbar-thumb: #94a3b8;
+    --app-scrollbar-thumb-hover: #64748b;
 }
 
 .dark {
@@ -60,6 +63,9 @@
 
     --app-glow: #083344;
     --app-shadow: 0 12px 30px rgb(0 0 0 / 22%);
+    --app-scrollbar-track: #0b1220;
+    --app-scrollbar-thumb: #334155;
+    --app-scrollbar-thumb-hover: #0ea5e9;
 }
 
 @theme inline {
@@ -102,6 +108,8 @@
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        scrollbar-color: var(--app-scrollbar-thumb) var(--app-scrollbar-track);
+        scrollbar-width: thin;
     }
 
     body {
@@ -123,6 +131,10 @@
         min-height: 100vh;
     }
 
+    html:has(dialog[open]) {
+        overflow: hidden;
+    }
+
     button,
     input,
     textarea,
@@ -140,6 +152,35 @@
 
     ::selection {
         background: rgb(14 165 233 / 25%);
+    }
+
+    * {
+        scrollbar-color: var(--app-scrollbar-thumb) var(--app-scrollbar-track);
+        scrollbar-width: thin;
+    }
+
+    *::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: var(--app-scrollbar-track);
+    }
+
+    *::-webkit-scrollbar-thumb {
+        min-height: 40px;
+        border: 2px solid var(--app-scrollbar-track);
+        border-radius: 999px;
+        background: var(--app-scrollbar-thumb);
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+        background: var(--app-scrollbar-thumb-hover);
+    }
+
+    *::-webkit-scrollbar-corner {
+        background: var(--app-scrollbar-track);
     }
 }
 

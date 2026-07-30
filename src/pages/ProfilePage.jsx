@@ -2,6 +2,7 @@
 import { Camera, LogOut, Mail, Save, Trash2, UserRound } from 'lucide-react'
 import { toast } from 'sonner'
 import PageContainer from '@/components/layout/PageContainer'
+import AvatarCropDialog from '@/components/profile/AvatarCropDialog'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import Input from '@/components/ui/Input'
@@ -11,9 +12,11 @@ import { useTaskStore } from '@/features/tasks/store/useTaskStore'
 const ProfilePage = () => {
     const user = useAuthStore((state) => state.user)
     const updateProfile = useAuthStore((state) => state.updateProfile)
+    const isUsernameAvailable = useAuthStore((state) => state.isUsernameAvailable)
     const logout = useAuthStore((state) => state.logout)
     const tasks = useTaskStore((state) => state.tasks)
-    const [form, setForm] = useState({ name: user.name, email: user.email })
+    const [form, setForm] = useState({ name: user.name, username: user.username, email: user.email })
+    const [avatarDraft, setAvatarDraft] = useState(null)
 
     const active = tasks.filter((task) => !task.archived && !task.completed).length
     const completed = tasks.filter((task) => !task.archived && task.completed).length
@@ -24,7 +27,15 @@ const ProfilePage = () => {
             toast.error('Enter a valid name and email address.')
             return
         }
-        updateProfile({ name: form.name.trim(), email: form.email.trim().toLowerCase() })
+        if (!/^[a-zA-Z0-9_]{3,20}$/.test(form.username.trim())) {
+            toast.error('Username must be 3–20 characters using letters, numbers, or underscores.')
+            return
+        }
+        if (!isUsernameAvailable(form.username, user.id)) {
+            toast.error('That username is already taken.')
+            return
+        }
+        updateProfile({ name: form.name.trim(), username: form.username.trim().toLowerCase(), email: form.email.trim().toLowerCase() })
         toast.success('Profile updated.')
     }
 
@@ -42,8 +53,7 @@ const ProfilePage = () => {
 
         const reader = new FileReader()
         reader.onload = () => {
-            updateProfile({ avatarSrc: reader.result })
-            toast.success('Profile picture updated.')
+            setAvatarDraft(reader.result)
         }
         reader.onerror = () => toast.error('The selected image could not be read.')
         reader.readAsDataURL(file)
@@ -62,7 +72,7 @@ const ProfilePage = () => {
                             {user.avatarSrc && <button className="inline-flex h-8 items-center gap-2 rounded-control px-3 text-xs font-semibold text-danger hover:bg-danger/10" type="button" onClick={() => { updateProfile({ avatarSrc: null }); toast.success('Profile picture removed.') }}><Trash2 className="size-3.5" />Remove</button>}
                         </div>
                         <p className="mt-2 text-[10px] text-muted">PNG, JPG, WebP, or GIF. Maximum 2 MB.</p>
-                        <h2 className="mt-4 font-display text-lg font-bold text-foreground">{user.name}</h2><p className="mt-1 text-xs text-muted">{user.email}</p>
+                        <h2 className="mt-4 font-display text-lg font-bold text-foreground">{user.name}</h2><p className="mt-1 text-xs font-semibold text-primary">@{user.username}</p><p className="mt-1 text-xs text-muted">{user.email}</p>
                         <div className="mt-5 grid grid-cols-2 gap-2"><div className="rounded-xl bg-control p-3"><strong className="font-display text-xl text-foreground">{active}</strong><span className="block text-[10px] text-muted">Open tasks</span></div><div className="rounded-xl bg-control p-3"><strong className="font-display text-xl text-foreground">{completed}</strong><span className="block text-[10px] text-muted">Completed</span></div></div>
                         <Button className="mt-5 w-full" variant="secondary" onClick={logout}><LogOut className="size-4" />Log out</Button>
                     </Card>
@@ -70,12 +80,14 @@ const ProfilePage = () => {
                         <h2 className="font-display text-lg font-bold text-foreground">Profile details</h2><p className="mt-1 text-xs text-muted">Update the information shown in your account menu.</p>
                         <form className="mt-6 grid max-w-lg gap-4" onSubmit={handleSubmit}>
                             <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><UserRound className="size-3.5" />Display name</span><Input value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))} /></label>
+                            <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><UserRound className="size-3.5" />Username</span><Input value={form.username} onChange={(event) => setForm((current) => ({ ...current, username: event.target.value }))} /></label>
                             <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><Mail className="size-3.5" />Email address</span><Input type="email" value={form.email} onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))} /></label>
                             <Button className="mt-2 w-fit" type="submit"><Save className="size-4" />Save changes</Button>
                         </form>
                     </Card>
                 </div>
             </PageContainer>
+            <AvatarCropDialog key={avatarDraft} imageSrc={avatarDraft} onCancel={() => setAvatarDraft(null)} onCrop={(avatarSrc) => { updateProfile({ avatarSrc }); setAvatarDraft(null); toast.success('Profile picture updated.') }} />
         </main>
     )
 }

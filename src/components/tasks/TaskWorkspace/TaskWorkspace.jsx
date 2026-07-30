@@ -1,22 +1,24 @@
-import { useMemo, useState } from 'react'
-import { LayoutGrid, List, Plus, SearchX } from 'lucide-react'
+import { useMemo, useRef, useState } from 'react'
+import { Plus, SearchX } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import SearchField from '@/components/ui/SearchField'
 import Select from '@/components/ui/Select'
 import TaskItem from '@/components/tasks/TaskItem'
 import { taskCategorySchema } from '@/features/tasks/model/taskSchema'
+import { gsap, prefersReducedMotion, useGSAP } from '@/lib/gsap'
 
 const priorityWeight = { High: 0, Medium: 1, Low: 2 }
 
-const TaskWorkspace = ({ title, description, tasks, globalQuery, allowCompletedToggle = false, onAddTask, onToggle, onEdit, onArchive, onRestore, onDelete }) => {
+const TaskWorkspace = ({ title, description, tasks, allowCompletedToggle = false, onAddTask, onToggle, onEdit, onArchive, onRestore, onDelete }) => {
     const [query, setQuery] = useState('')
+    const workspaceRef = useRef(null)
     const [category, setCategory] = useState('All')
     const [sort, setSort] = useState('due')
     const [showCompleted, setShowCompleted] = useState(false)
 
     const filteredTasks = useMemo(() => {
-        const search = (globalQuery || query).trim().toLowerCase()
+        const search = query.trim().toLowerCase()
         return [...tasks]
             .filter((task) => (showCompleted || !allowCompletedToggle || !task.completed))
             .filter((task) => category === 'All' || task.category === category)
@@ -27,19 +29,24 @@ const TaskWorkspace = ({ title, description, tasks, globalQuery, allowCompletedT
                 if (sort === 'created') return b.createdAt.localeCompare(a.createdAt)
                 return a.dueDate.localeCompare(b.dueDate)
             })
-    }, [allowCompletedToggle, category, globalQuery, query, showCompleted, sort, tasks])
+    }, [allowCompletedToggle, category, query, showCompleted, sort, tasks])
+    const visibleTaskIds = filteredTasks.map((task) => task.id).join('|')
+
+    useGSAP(() => {
+        if (prefersReducedMotion()) return
+        gsap.fromTo('[data-task-item]', { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.28, stagger: 0.035, ease: 'power2.out', clearProps: 'transform' })
+    }, { scope: workspaceRef, dependencies: [visibleTaskIds], revertOnUpdate: true })
 
     return (
-        <Card className="overflow-hidden">
+        <Card ref={workspaceRef} className="overflow-hidden">
             <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border px-4 py-4 sm:px-5">
                 <div><h2 className="font-display text-base font-bold text-foreground">{title}</h2><p className="mt-1 text-xs text-muted">{description ?? `${filteredTasks.length} tasks in this view`}</p></div>
                 {allowCompletedToggle && <button className="text-xs font-semibold text-primary" type="button" onClick={() => setShowCompleted((value) => !value)}>{showCompleted ? 'Hide completed' : 'Show completed'}</button>}
             </div>
-            <div className="grid gap-2 border-b border-border p-3 sm:grid-cols-[minmax(180px,1fr)_150px_145px_auto] sm:px-5">
-                <SearchField placeholder="Search this view" value={query} onChange={(event) => setQuery(event.target.value)} />
+            <div className="grid gap-2 border-b border-border p-3 sm:grid-cols-[minmax(180px,1fr)_150px_145px] sm:px-5">
+                <SearchField aria-label="Search tasks" placeholder="Search tasks" value={query} onChange={(event) => setQuery(event.target.value)} />
                 <Select aria-label="Filter category" value={category} onChange={(event) => setCategory(event.target.value)}><option>All</option>{taskCategorySchema.options.map((item) => <option key={item}>{item}</option>)}</Select>
                 <Select aria-label="Sort tasks" value={sort} onChange={(event) => setSort(event.target.value)}><option value="due">Due date</option><option value="priority">Priority</option><option value="created">Created date</option><option value="title">Alphabetical</option></Select>
-                <div className="hidden items-center gap-1 sm:flex"><span className="rounded-lg bg-primary/15 p-2 text-primary"><List className="size-4" /></span><span className="p-2 text-muted"><LayoutGrid className="size-4" /></span></div>
             </div>
             <div className="divide-y divide-border/60 p-2 sm:p-3">
                 {filteredTasks.length ? filteredTasks.map((task) => (

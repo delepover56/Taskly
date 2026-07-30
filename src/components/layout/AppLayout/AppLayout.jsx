@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Outlet, useNavigate } from 'react-router'
+import { useEffect, useRef, useState } from 'react'
+import { Outlet, useLocation, useNavigate } from 'react-router'
 import { Plus, Trash2 } from 'lucide-react'
 import { Toaster, toast } from 'sonner'
 import MobileDrawer from '@/components/layout/MobileDrawer'
@@ -11,6 +11,7 @@ import Button from '@/components/ui/Button'
 import Dialog from '@/components/ui/Dialog'
 import { useAuthStore } from '@/features/auth/store/useAuthStore'
 import { useTaskStore } from '@/features/tasks/store/useTaskStore'
+import { gsap, prefersReducedMotion, useGSAP } from '@/lib/gsap'
 
 const readPreference = (key, fallback) => {
     try { return localStorage.getItem(key) || fallback } catch { return fallback }
@@ -18,7 +19,8 @@ const readPreference = (key, fallback) => {
 
 const AppLayout = () => {
     const navigate = useNavigate()
-    const [globalQuery, setGlobalQuery] = useState('')
+    const location = useLocation()
+    const routeRef = useRef(null)
     const [mobileOpen, setMobileOpen] = useState(false)
     const [sidebarCollapsed, setSidebarCollapsed] = useState(() => readPreference('taskly-sidebar-collapsed', 'false') === 'true')
     const [formState, setFormState] = useState(null)
@@ -49,7 +51,7 @@ const AppLayout = () => {
         const handleKeys = (event) => {
             if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
                 event.preventDefault()
-                document.querySelector('[aria-label="Search all tasks"]')?.focus()
+                document.querySelector('[aria-label="Search tasks"]')?.focus()
             }
             if (event.key.toLowerCase() === 'n' && !event.target.matches('input, textarea, select')) setFormState({ mode: 'create', task: null })
         }
@@ -58,6 +60,11 @@ const AppLayout = () => {
             document.removeEventListener('keydown', handleKeys)
         }
     }, [])
+
+    useGSAP(() => {
+        if (prefersReducedMotion()) return
+        gsap.fromTo(routeRef.current, { autoAlpha: 0, scale: 0.995 }, { autoAlpha: 1, scale: 1, duration: 0.32, ease: 'power2.out', transformOrigin: 'top center', clearProps: 'opacity,visibility,transform' })
+    }, { scope: routeRef, dependencies: [location.pathname], revertOnUpdate: true })
 
     const openCreate = () => setFormState({ mode: 'create', task: null })
     const openEdit = (task) => setFormState({ mode: 'edit', task })
@@ -85,7 +92,6 @@ const AppLayout = () => {
 
     const outletContext = {
         tasks: store.tasks,
-        globalQuery,
         openCreate,
         openEdit,
         toggleTask: store.toggleTask,
@@ -99,15 +105,17 @@ const AppLayout = () => {
             <Sidebar className="sticky top-0 hidden h-screen lg:flex" collapsible collapsed={sidebarCollapsed} onCollapsedChange={setSidebarCollapsed} />
             <MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} />
             <div className="min-w-0 flex-1">
-                <Topbar searchData={globalQuery} onSearchChange={(event) => setGlobalQuery(event.target.value)} onMenuOpen={() => setMobileOpen(true)} themeData={theme} onToggleTheme={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')} onAddTask={openCreate} onOpenSettings={() => setSettingsOpen(true)} user={user} onOpenProfile={() => navigate('/profile')} onOpenLogin={() => navigate('/login')} onOpenSignUp={() => navigate('/signup')} onLogout={() => { logout(); navigate('/login'); toast.success('You have been logged out.') }} />
-                <Outlet context={outletContext} />
+                <Topbar onMenuOpen={() => setMobileOpen(true)} themeData={theme} onToggleTheme={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')} onAddTask={openCreate} onOpenSettings={() => setSettingsOpen(true)} user={user} tasks={store.tasks} onOpenProfile={() => navigate('/profile')} onOpenLogin={() => navigate('/login')} onOpenSignUp={() => navigate('/signup')} onLogout={() => { logout(); navigate('/login'); toast.success('You have been logged out.') }} />
+                <div ref={routeRef}>
+                    <Outlet context={outletContext} />
+                </div>
             </div>
 
             <Button className="fixed right-5 bottom-5 z-20 size-12 rounded-full p-0 shadow-primary lg:hidden" aria-label="Add task" onClick={openCreate}><Plus className="size-5" /></Button>
 
             {formState && <TaskFormDialog key={formState.task?.id ?? 'new-task'} task={formState.task} onClose={() => setFormState(null)} onSubmit={saveTask} />}
             <Dialog open={Boolean(deleteTarget)} onClose={() => setDeleteTarget(null)} title="Delete this task?" description="This permanently removes the task from your workspace." footer={<><Button variant="secondary" onClick={() => setDeleteTarget(null)}>Keep task</Button><Button variant="danger" onClick={confirmDelete}><Trash2 className="size-4" />Delete task</Button></>}><p className="text-sm text-body">{deleteTarget?.title}</p></Dialog>
-            <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} theme={theme} onThemeChange={setTheme} density={density} onDensityChange={setDensity} onResetTasks={() => { store.resetTasks(); toast.success('Demo tasks restored.') }} />
+            <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} theme={theme} onThemeChange={setTheme} density={density} onDensityChange={setDensity} onResetTasks={() => { store.resetTasks(); toast.success('Starter tasks restored.') }} />
             <Toaster richColors position="bottom-right" theme={theme} />
         </div>
     )

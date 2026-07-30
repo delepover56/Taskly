@@ -5,7 +5,7 @@ import { offsetDateKey } from '@/lib/date'
 
 const now = new Date().toISOString()
 
-const previewTasks = [
+const initialTasks = [
     {
         id: '878c6930-116e-4807-b692-2272dabb5674',
         title: 'Finalize Q3 product roadmap',
@@ -127,7 +127,7 @@ const previewTasks = [
 export const useTaskStore = create(
     persist(
         (set) => ({
-            tasks: previewTasks,
+            tasks: initialTasks,
 
             addTask: (taskData) => {
                 const timestamp = new Date().toISOString()
@@ -210,7 +210,7 @@ export const useTaskStore = create(
                 }))
             },
 
-            resetTasks: () => set({ tasks: previewTasks }),
+            resetTasks: () => set({ tasks: initialTasks }),
         }),
         {
             name: 'taskly-tasks-v2',
