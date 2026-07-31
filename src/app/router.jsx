@@ -20,7 +20,7 @@ export const router = createBrowserRouter([
         errorElement: <RouteErrorPage />,
     },
     {
-        element: <AppLayout />,
+        element: <RequireAuth><AppLayout /></RequireAuth>,
         errorElement: <RouteErrorPage />,
         children: [
             { index: true, element: <WorkspacePage view="dashboard" /> },
@@ -29,7 +29,7 @@ export const router = createBrowserRouter([
             { path: 'important', element: <WorkspacePage view="important" /> },
             { path: 'completed', element: <WorkspacePage view="completed" /> },
             { path: 'archived', element: <WorkspacePage view="archived" /> },
-            { path: 'profile', element: <RequireAuth><ProfilePage /></RequireAuth> },
+            { path: 'profile', element: <ProfilePage /> },
             { path: '*', element: <NotFoundPage /> },
         ],
     },
