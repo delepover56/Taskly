@@ -1,7 +1,10 @@
 import 'dotenv/config'
+import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express from 'express'
 import helmet from 'helmet'
+import { connectDatabase } from './config/database.js'
+import authRouter from './routes/authRoutes.js'
 import healthRouter from './routes/healthRoutes.js'
 import { errorHandler } from './middleware/errorHandler.js'
 import { notFound } from './middleware/notFound.js'
@@ -27,9 +30,19 @@ app.use(cors({
     credentials: true,
 }))
 app.use(express.json({ limit: '1mb' }))
+app.use(cookieParser())
 
 app.get('/', (request, response) => response.json({ service: 'taskly-api', health: '/api/health' }))
 app.use('/api/health', healthRouter)
+app.use('/api/auth', async (request, response, next) => {
+    void response
+    try {
+        await connectDatabase()
+        next()
+    } catch (error) {
+        next(error)
+    }
+}, authRouter)
 app.use(notFound)
 app.use(errorHandler)
 

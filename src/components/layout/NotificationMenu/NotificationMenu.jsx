@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { AlertTriangle, Bell, CalendarClock, CheckCircle2 } from 'lucide-react'
 import { useEffect, useMemo, useRef } from 'react'
 import IconButton from '@/components/ui/IconButton'
@@ -51,8 +51,23 @@ const NotificationMenu = ({ tasks = [] }) => {
     }, [isOpen])
 
     useGSAP(() => {
-        if (!isOpen || !panelRef.current || prefersReducedMotion()) return
-        gsap.fromTo(panelRef.current, { autoAlpha: 0, y: -8, scale: 0.98 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.22, ease: 'power2.out', transformOrigin: 'top right' })
+        const panel = panelRef.current
+        if (!panel) return
+
+        if (prefersReducedMotion()) {
+            gsap.set(panel, { autoAlpha: isOpen ? 1 : 0, y: 0, scale: 1 })
+            return
+        }
+
+        gsap.to(panel, {
+            autoAlpha: isOpen ? 1 : 0,
+            y: isOpen ? 0 : -6,
+            scale: isOpen ? 1 : 0.98,
+            duration: isOpen ? 0.22 : 0.16,
+            ease: isOpen ? 'power2.out' : 'power2.in',
+            transformOrigin: 'top right',
+            overwrite: true,
+        })
     }, { scope: menuRef, dependencies: [isOpen] })
 
     return (
@@ -61,8 +76,7 @@ const NotificationMenu = ({ tasks = [] }) => {
                 <Bell className="size-4.5" />
                 {unread > 0 && <span className="absolute top-1.5 right-1.5 size-2 rounded-full border-2 border-surface bg-danger" />}
             </IconButton>
-            {isOpen && (
-                    <section ref={panelRef} className="absolute top-full right-0 z-40 mt-2 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-border bg-card shadow-card" aria-label="Notifications">
+            <section ref={panelRef} className="invisible fixed top-18 right-3 left-3 z-40 max-h-[calc(100dvh-5.25rem)] w-auto overflow-y-auto rounded-xl border border-border bg-card opacity-0 shadow-card sm:absolute sm:top-full sm:right-0 sm:left-auto sm:mt-2 sm:max-h-[calc(100dvh-6rem)] sm:w-88" aria-label="Notifications" aria-hidden={!isOpen} inert={!isOpen}>
                         <header className="flex items-center justify-between border-b border-border px-4 py-3"><div><h2 className="font-display text-sm font-bold text-foreground">Notifications</h2><p className="text-[10px] text-muted">{unread ? `${unread} unread update${unread === 1 ? '' : 's'}` : 'Nothing needs your attention'}</p></div>{unread > 0 && <button className="text-[11px] font-semibold text-primary" type="button" onClick={markAllRead}>Mark all as read</button>}</header>
                         {unread > 0 ? (
                             <div className="p-2">
@@ -76,8 +90,7 @@ const NotificationMenu = ({ tasks = [] }) => {
                                 <div><span className="text-5xl" aria-hidden="true">&#128524;</span><h3 className="mt-4 font-display text-sm font-bold text-foreground">All clear</h3><p className="mt-1 text-xs leading-5 text-muted">You have read every notification. Enjoy the quiet.</p></div>
                             </div>
                         )}
-                    </section>
-            )}
+            </section>
         </div>
     )
 }

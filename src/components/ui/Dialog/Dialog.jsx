@@ -7,6 +7,7 @@ import { gsap, prefersReducedMotion, useGSAP } from '@/lib/gsap'
 const Dialog = ({
     open,
     onClose,
+    onAfterClose,
     title,
     description,
     children,
@@ -20,18 +21,41 @@ const Dialog = ({
 
     useGSAP(() => {
         const dialog = dialogRef.current
+        const panel = dialog?.firstElementChild
 
-        if (!dialog) return
+        if (!dialog || !panel) return
 
-        if (open && !dialog.open) {
-            dialog.showModal()
-            if (!prefersReducedMotion()) {
-                gsap.fromTo(dialog.firstElementChild, { autoAlpha: 0, scale: 0.97 }, { autoAlpha: 1, scale: 1, duration: 0.26, ease: 'power3.out', clearProps: 'transform' })
+        if (open) {
+            if (prefersReducedMotion()) {
+                if (!dialog.open) dialog.showModal()
+                gsap.set([dialog, panel], { autoAlpha: 1, y: 0, scale: 1 })
+                return
             }
+
+            gsap.set(dialog, { autoAlpha: 0 })
+            gsap.set(panel, { autoAlpha: 0, y: 24, scale: 0.94 })
+            if (!dialog.open) dialog.showModal()
+
+            gsap.timeline({ delay: 0.03 })
+                .to(dialog, { autoAlpha: 1, duration: 0.22, ease: 'power2.out' })
+                .to(panel, { autoAlpha: 1, y: 0, scale: 1, duration: 0.38, ease: 'back.out(1.25)' }, '<')
+            return
         }
 
         if (!open && dialog.open) {
-            dialog.close()
+            const finishClose = () => {
+                dialog.close()
+                onAfterClose?.()
+            }
+
+            if (prefersReducedMotion()) {
+                finishClose()
+                return
+            }
+
+            gsap.timeline({ onComplete: finishClose })
+                .to(panel, { autoAlpha: 0, y: 18, scale: 0.96, duration: 0.24, ease: 'power2.in' })
+                .to(dialog, { autoAlpha: 0, duration: 0.22, ease: 'power2.in' }, '<')
         }
     }, { scope: dialogRef, dependencies: [open] })
 

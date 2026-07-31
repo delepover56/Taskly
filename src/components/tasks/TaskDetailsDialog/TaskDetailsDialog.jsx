@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Archive, CalendarDays, CheckCircle2, Clock3 } from 'lucide-react'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
@@ -7,10 +8,12 @@ import { formatDateTime, formatTaskDate, toDateKey } from '@/lib/date'
 const priorityVariant = { High: 'danger', Medium: 'warning', Low: 'success' }
 
 const TaskDetailsDialog = ({ task, onClose }) => {
+    const [isOpen, setIsOpen] = useState(true)
+    const handleClose = () => setIsOpen(false)
     const isOverdue = !task.completed && task.dueDate < toDateKey()
 
     return (
-        <Dialog open onClose={onClose} title={task.title} description="Task details" footer={<Button onClick={onClose}>Close</Button>}>
+        <Dialog open={isOpen} onClose={handleClose} onAfterClose={onClose} title={task.title} description="Task details" footer={<Button onClick={handleClose}>Close</Button>}>
             <div className="grid gap-5">
                 <div className="flex flex-wrap gap-2">
                     <Badge varient={task.completed ? 'success' : 'primary'}>{task.completed ? 'Completed' : 'Open'}</Badge>

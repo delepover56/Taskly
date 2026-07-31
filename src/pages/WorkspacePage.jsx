@@ -20,9 +20,9 @@ const viewCopy = {
 }
 
 const StatCard = ({ icon: Icon, label, value, note, tone }) => (
-    <Card data-dashboard-card className="flex items-center gap-3 p-4">
-        <span className={`grid size-10 shrink-0 place-items-center rounded-xl ${tone}`}><Icon className="size-5" /></span>
-        <div><p className="text-[11px] font-semibold text-muted">{label}</p><strong className="font-display text-xl text-foreground">{value}</strong><p className="text-[10px] text-muted">{note}</p></div>
+    <Card data-dashboard-card className="flex min-w-0 items-center gap-2 p-3 sm:gap-3 sm:p-4">
+        <span className={`grid size-8 shrink-0 place-items-center rounded-lg sm:size-10 sm:rounded-xl ${tone}`}><Icon className="size-4 sm:size-5" /></span>
+        <div className="min-w-0"><p className="text-[11px] font-semibold text-muted">{label}</p><strong className="font-display text-xl text-foreground">{value}</strong><p className="text-[10px] text-muted">{note}</p></div>
     </Card>
 )
 
@@ -77,7 +77,7 @@ const WorkspacePage = ({ view }) => {
                 </header>
 
                 {isDashboard && (
-                    <section className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Live task statistics">
+                    <section className="mb-5 grid grid-cols-2 gap-2 sm:gap-3 xl:grid-cols-4" aria-label="Live task statistics">
                         <StatCard icon={ListTodo} label="Due today" value={todayTasks.length} note={`${todayTasks.length - completedToday} still open`} tone="bg-primary/10 text-primary" />
                         <StatCard icon={CheckCircle2} label="Completed" value={completed.length} note="across active lists" tone="bg-success/10 text-success" />
                         <StatCard icon={Clock3} label="Open tasks" value={pending.length} note={`${upcomingCount} due after today`} tone="bg-warning/10 text-warning" />
@@ -92,7 +92,7 @@ const WorkspacePage = ({ view }) => {
                                 <h2 className="font-display text-base font-bold text-foreground">Next deadline</h2>
                                 {nextTask ? (
                                     <div className="mt-4 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-control p-4">
-                                        <div><p className="text-sm font-semibold text-foreground">{nextTask.title}</p><p className="mt-1 flex items-center gap-1.5 text-xs text-muted"><CalendarDays className="size-3.5" />Due {formatTaskDate(nextTask.dueDate)} · {nextTask.priority} priority</p></div>
+                                        <div><p className="text-sm font-semibold text-foreground">{nextTask.title}</p><p className="mt-1 flex items-center gap-1.5 text-xs text-muted"><CalendarDays className="size-3.5" />Due {formatTaskDate(nextTask.dueDate)} Â· {nextTask.priority} priority</p></div>
                                         <Button variant="secondary" size="sm" onClick={() => openView(nextTask)}>View task</Button>
                                     </div>
                                 ) : <p className="mt-4 text-sm text-muted">No unfinished deadlines. Add a task when you are ready to plan more work.</p>}

@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { LogIn, LogOut, Moon, Settings, Sun, UserPlus, UserRound } from 'lucide-react'
 import IconButton from '@/components/ui/IconButton'
 import { cn } from '@/lib/cn'
@@ -34,8 +34,23 @@ const ProfileMenu = ({ avatarSrc, userName, userUsername, userEmail, isAuthentic
     }, [isOpen])
 
     useGSAP(() => {
-        if (!isOpen || !panelRef.current || prefersReducedMotion()) return
-        gsap.fromTo(panelRef.current, { autoAlpha: 0, y: -8, scale: 0.98 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.22, ease: 'power2.out', transformOrigin: 'top right' })
+        const panel = panelRef.current
+        if (!panel) return
+
+        if (prefersReducedMotion()) {
+            gsap.set(panel, { autoAlpha: isOpen ? 1 : 0, y: 0, scale: 1 })
+            return
+        }
+
+        gsap.to(panel, {
+            autoAlpha: isOpen ? 1 : 0,
+            y: isOpen ? 0 : -6,
+            scale: isOpen ? 1 : 0.98,
+            duration: isOpen ? 0.22 : 0.16,
+            ease: isOpen ? 'power2.out' : 'power2.in',
+            transformOrigin: 'top right',
+            overwrite: true,
+        })
     }, { scope: menuRef, dependencies: [isOpen] })
 
     return (
@@ -43,8 +58,7 @@ const ProfileMenu = ({ avatarSrc, userName, userUsername, userEmail, isAuthentic
             <IconButton className="overflow-hidden rounded-full bg-control-muted text-muted hover:text-foreground" aria-label="Open profile menu" aria-haspopup="menu" aria-expanded={isOpen} onClick={() => setIsOpen((current) => !current)}>
                 {avatarSrc ? <img className="size-full object-cover" src={avatarSrc} alt="" /> : <UserRound className="size-[18px]" />}
             </IconButton>
-            {isOpen && (
-                    <div ref={panelRef} className="absolute top-full right-0 z-40 mt-2 w-56 rounded-xl border border-border bg-card p-2 shadow-card" role="menu">
+            <div ref={panelRef} className="invisible absolute top-full right-0 z-40 mt-2 w-56 rounded-xl border border-border bg-card p-2 opacity-0 shadow-card" role="menu" aria-hidden={!isOpen} inert={!isOpen}>
                         <div className="flex items-center gap-3 border-b border-border px-3 py-2.5">
                             <span className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-full bg-control-muted text-muted">
                                 {avatarSrc ? <img className="size-full object-cover" src={avatarSrc} alt="" /> : <UserRound className="size-5" />}
@@ -70,8 +84,7 @@ const ProfileMenu = ({ avatarSrc, userName, userUsername, userEmail, isAuthentic
                             </button>
                         </div>
                         {isAuthenticated && <button className={cn(itemClassName, 'border-t border-border text-danger')} type="button" role="menuitem" onClick={() => handleMenuAction(onLogout)}><LogOut className="size-4" /> Log out</button>}
-                    </div>
-            )}
+            </div>
         </div>
     )
 }

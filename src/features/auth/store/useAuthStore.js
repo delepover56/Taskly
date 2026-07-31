@@ -1,83 +1,58 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { apiRequest } from '@/lib/api'
 
-export const useAuthStore = create(
-    persist(
-        (set, get) => ({
-            user: null,
-            account: null,
-            accounts: [],
+export const useAuthStore = create((set, get) => ({
+    user: null,
+    csrfToken: null,
+    status: 'idle',
 
-            isUsernameAvailable: (username, excludedId) => {
-                const normalized = username.trim().toLowerCase()
-                return !get().accounts.some((item) => item.id !== excludedId && item.username.toLowerCase() === normalized)
-            },
+    initialize: async () => {
+        if (get().status !== 'idle') return
+        set({ status: 'loading' })
+        try {
+            const session = await apiRequest('/auth/me')
+            set({ user: session.user, csrfToken: session.csrfToken, status: 'ready' })
+        } catch {
+            set({ user: null, csrfToken: null, status: 'ready' })
+        }
+    },
 
-            signUp: ({ name, username, email }) => {
-                const account = {
-                    id: crypto.randomUUID(),
-                    name: name.trim(),
-                    username: username.trim().toLowerCase(),
-                    email: email.trim().toLowerCase(),
-                    avatarSrc: null,
-                    createdAt: new Date().toISOString(),
-                }
-                set((state) => ({ account, accounts: [...state.accounts, account], user: null }))
-                return account
-            },
+    signUp: async ({ name, username, email, password }) => apiRequest('/auth/signup', {
+        method: 'POST',
+        body: JSON.stringify({ name, username, email, password }),
+    }),
 
-            login: ({ email }) => {
-                const normalizedEmail = email.trim().toLowerCase()
-                const existingAccount = get().accounts.find((item) => item.email === normalizedEmail) ?? get().account
-                const user = existingAccount?.email === normalizedEmail
-                    ? existingAccount
-                    : {
-                        id: crypto.randomUUID(),
-                        name: normalizedEmail.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase()),
-                        username: normalizedEmail.split('@')[0].replace(/[^a-z0-9_]/g, ''),
-                        email: normalizedEmail,
-                        avatarSrc: null,
-                        createdAt: new Date().toISOString(),
-                    }
-                set((state) => ({
-                    user,
-                    account: user,
-                    accounts: state.accounts.some((item) => item.id === user.id) ? state.accounts : [...state.accounts, user],
-                }))
-                return user
-            },
+    verifyEmail: async ({ email, code }) => apiRequest('/auth/verify-email', {
+        method: 'POST',
+        body: JSON.stringify({ email, code }),
+    }),
 
-            updateProfile: (profile) => {
-                set((state) => {
-                    if (!state.user) return state
-                    const user = { ...state.user, ...profile }
-                    return {
-                        user,
-                        account: state.account?.id === user.id ? user : state.account,
-                        accounts: state.accounts.map((item) => item.id === user.id ? user : item),
-                    }
-                })
-            },
+    resendVerification: async (email) => apiRequest('/auth/resend-verification', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+    }),
 
-            logout: () => set({ user: null }),
-        }),
-        {
-            name: 'taskly-auth-preview-v1',
-            version: 2,
-            migrate: (persistedState) => {
-                const account = persistedState.account
-                const username = account?.username ?? account?.email?.split('@')[0].replace(/[^a-z0-9_]/g, '')
-                const migratedAccount = account ? { ...account, username } : null
-                const user = persistedState.user
-                    ? { ...persistedState.user, username: persistedState.user.username ?? username }
-                    : null
-                return {
-                    ...persistedState,
-                    account: migratedAccount,
-                    user,
-                    accounts: migratedAccount ? [migratedAccount] : [],
-                }
-            },
-        },
-    ),
-)
+    login: async ({ email, password }) => {
+        const session = await apiRequest('/auth/login', {
+            method: 'POST',
+            body: JSON.stringify({ email, password }),
+        })
+        set({ user: session.user, csrfToken: session.csrfToken, status: 'ready' })
+        return session.user
+    },
+
+    updateProfile: (profile) => set((state) => ({
+        user: state.user ? { ...state.user, ...profile } : null,
+    })),
+
+    isUsernameAvailable: () => true,
+
+    logout: async () => {
+        const csrfToken = get().csrfToken
+        try {
+            if (csrfToken) await apiRequest('/auth/logout', { method: 'POST', csrfToken })
+        } finally {
+            set({ user: null, csrfToken: null, status: 'ready' })
+        }
+    },
+}))

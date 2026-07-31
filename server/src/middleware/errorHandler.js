@@ -7,6 +7,8 @@ export const errorHandler = (error, request, response, next) => {
     response.status(statusCode).json({
         error: statusCode >= 500 ? 'Internal server error' : 'Request failed',
         message: isProduction && statusCode >= 500 ? 'The server could not complete this request.' : error.message,
+        ...(error.code && { code: error.code }),
+        ...(error.details && { details: error.details }),
         ...(!isProduction && { stack: error.stack }),
     })
 }
