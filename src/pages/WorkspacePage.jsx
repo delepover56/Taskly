@@ -27,7 +27,7 @@ const StatCard = ({ icon: Icon, label, value, note, tone }) => (
 )
 
 const WorkspacePage = ({ view }) => {
-    const { tasks, openCreate, openEdit, toggleTask, archiveTask, restoreTask, requestDelete } = useOutletContext()
+    const { tasks, openCreate, openView, openEdit, toggleTask, archiveTask, restoreTask, requestDelete } = useOutletContext()
     const pageRef = useRef(null)
     const user = useAuthStore((state) => state.user)
     const today = toDateKey()
@@ -93,7 +93,7 @@ const WorkspacePage = ({ view }) => {
                                 {nextTask ? (
                                     <div className="mt-4 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-control p-4">
                                         <div><p className="text-sm font-semibold text-foreground">{nextTask.title}</p><p className="mt-1 flex items-center gap-1.5 text-xs text-muted"><CalendarDays className="size-3.5" />Due {formatTaskDate(nextTask.dueDate)} · {nextTask.priority} priority</p></div>
-                                        <Button variant="secondary" size="sm" onClick={() => openEdit(nextTask)}>Review task</Button>
+                                        <Button variant="secondary" size="sm" onClick={() => openView(nextTask)}>View task</Button>
                                     </div>
                                 ) : <p className="mt-4 text-sm text-muted">No unfinished deadlines. Add a task when you are ready to plan more work.</p>}
                             </Card>
@@ -106,7 +106,7 @@ const WorkspacePage = ({ view }) => {
                         <InsightsPanel tasks={tasks} selectedDate={selectedDate} onSelectDate={setSelectedDate} />
                     </div>
                 ) : (
-                    <TaskWorkspace title={copy.listTitle} tasks={visibleTasks} allowCompletedToggle={view === 'today'} onAddTask={openCreate} onToggle={toggleTask} onEdit={openEdit} onArchive={archiveTask} onRestore={restoreTask} onDelete={requestDelete} />
+                    <TaskWorkspace title={copy.listTitle} tasks={visibleTasks} allowCompletedToggle={view === 'today'} onAddTask={openCreate} onView={openView} onToggle={toggleTask} onEdit={openEdit} onArchive={archiveTask} onRestore={restoreTask} onDelete={requestDelete} />
                 )}
             </PageContainer>
         </main>

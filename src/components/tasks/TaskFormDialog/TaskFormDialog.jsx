@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { Check } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Dialog from '@/components/ui/Dialog'
@@ -9,12 +9,12 @@ import { taskCategorySchema, taskPrioritySchema, taskSchema, taskTagSchema } fro
 import { toDateKey } from '@/lib/date'
 import { cn } from '@/lib/cn'
 
-const TaskFormDialog = ({ task, onClose, onSubmit }) => {
+const TaskFormDialog = ({ task, defaults, onClose, onSubmit }) => {
     const [form, setForm] = useState({
         title: task?.title ?? '',
         description: task?.description ?? '',
-        category: task?.category ?? 'Work',
-        priority: task?.priority ?? 'Medium',
+        category: task?.category ?? defaults?.category ?? 'Work',
+        priority: task?.priority ?? defaults?.priority ?? 'Medium',
         dueDate: task?.dueDate ?? toDateKey(),
         tags: task?.tags ?? ['Desk'],
     })

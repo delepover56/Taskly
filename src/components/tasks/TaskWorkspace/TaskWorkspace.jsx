@@ -10,7 +10,7 @@ import { gsap, prefersReducedMotion, useGSAP } from '@/lib/gsap'
 
 const priorityWeight = { High: 0, Medium: 1, Low: 2 }
 
-const TaskWorkspace = ({ title, description, tasks, allowCompletedToggle = false, onAddTask, onToggle, onEdit, onArchive, onRestore, onDelete }) => {
+const TaskWorkspace = ({ title, description, tasks, allowCompletedToggle = false, onAddTask, onView, onToggle, onEdit, onArchive, onRestore, onDelete }) => {
     const [query, setQuery] = useState('')
     const workspaceRef = useRef(null)
     const [category, setCategory] = useState('All')
@@ -50,7 +50,7 @@ const TaskWorkspace = ({ title, description, tasks, allowCompletedToggle = false
             </div>
             <div className="divide-y divide-border/60 p-2 sm:p-3">
                 {filteredTasks.length ? filteredTasks.map((task) => (
-                    <TaskItem key={task.id} task={task} onToggle={onToggle} onEdit={onEdit} onArchive={onArchive} onRestore={onRestore} onDelete={onDelete} />
+                    <TaskItem key={task.id} task={task} onView={onView} onToggle={onToggle} onEdit={onEdit} onArchive={onArchive} onRestore={onRestore} onDelete={onDelete} />
                 )) : (
                     <div className="flex min-h-60 flex-col items-center justify-center px-5 text-center">
                         <span className="mb-4 rounded-2xl bg-primary/10 p-4 text-primary"><SearchX className="size-7" /></span>

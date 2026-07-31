@@ -6,13 +6,13 @@ import { formatTaskDate, toDateKey } from '@/lib/date'
 
 const priorityVariant = { High: 'danger', Medium: 'warning', Low: 'success' }
 
-const TaskItem = ({ task, onToggle, onEdit, onArchive, onRestore, onDelete }) => {
+const TaskItem = ({ task, onView, onToggle, onEdit, onArchive, onRestore, onDelete }) => {
     const isOverdue = !task.completed && task.dueDate < toDateKey()
 
     return (
         <article data-task-item className="group flex gap-3 rounded-xl border border-transparent px-3 py-3 transition hover:border-border hover:bg-control/70">
             {!task.archived && <Checkbox aria-label={`${task.completed ? 'Uncomplete' : 'Complete'} ${task.title}`} checked={task.completed} onChange={() => onToggle(task.id)} />}
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 cursor-pointer rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-primary/40" role="button" tabIndex={0} aria-label={`View ${task.title}`} onClick={() => onView(task)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onView(task) } }}>
                 <div className="flex flex-wrap items-center gap-2">
                     <h3 className={`text-sm font-semibold text-foreground ${task.completed ? 'text-muted line-through' : ''}`}>{task.title}</h3>
                     <Badge varient={priorityVariant[task.priority]}>{task.priority}</Badge>
