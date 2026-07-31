@@ -52,7 +52,7 @@ const MobileDrawer = ({ open, onClose }) => {
     return (
         <div ref={drawerRef} className={`fixed inset-0 z-50 lg:hidden ${open ? 'pointer-events-auto' : 'pointer-events-none'}`} role="dialog" aria-modal="true" aria-label="Main navigation" aria-hidden={!open} inert={!open}>
             <button ref={backdropRef} className="invisible absolute inset-0 bg-slate-950/65 opacity-0 backdrop-blur-sm" type="button" aria-label="Close navigation" onClick={onClose} />
-            <div ref={panelRef} className="relative z-10 h-full w-64 max-w-[85vw] -translate-x-full shadow-2xl">
+            <div ref={panelRef} className="relative z-10 h-full w-64 max-w-[85vw] shadow-2xl" style={{ transform: 'translateX(-100%)' }}>
                 <Sidebar className="h-full" onNavigate={onClose} />
                 <IconButton ref={closeButtonRef} className="absolute top-5 right-3 z-20 bg-control/85 shadow-card" size="sm" aria-label="Close navigation" title="Close navigation" onClick={onClose}>
                     <X className="size-4" />
