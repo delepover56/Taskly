@@ -11,6 +11,9 @@ import { errorHandler } from './middleware/errorHandler.js'
 import { notFound } from './middleware/notFound.js'
 
 const app = express()
+// Vercel forwards the visitor IP through one trusted proxy hop. Without this,
+// every visitor can appear to come from the same proxy and share rate limits.
+app.set('trust proxy', 1)
 const allowedOrigins = new Set([
     'http://localhost:5173',
     ...(process.env.CLIENT_ORIGIN ?? '').split(',').map((origin) => origin.trim()).filter(Boolean),

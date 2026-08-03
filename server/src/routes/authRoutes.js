@@ -11,24 +11,24 @@ import { createStarterTasks } from '../services/starterTasks.js'
 import { avatarSchema, loginSchema, parseRequest, resendVerificationSchema, signupSchema, updateProfileSchema, verifyEmailSchema } from '../validation/authSchemas.js'
 
 const authRouter = Router()
-const authLimiter = rateLimit({
+const signupLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    limit: 20,
+    limit: 5,
     standardHeaders: 'draft-8',
     legacyHeaders: false,
-    message: { error: 'Too many requests', message: 'Please wait before trying again.' },
+    message: { error: 'Too many requests', message: 'Please wait before creating another account.' },
 })
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: 10,
+    skipSuccessfulRequests: true,
     standardHeaders: 'draft-8',
     legacyHeaders: false,
     message: { error: 'Too many requests', message: 'Please wait before trying to log in again.' },
 })
 
-authRouter.use(authLimiter)
 
-authRouter.post('/signup', async (request, response) => {
+authRouter.post('/signup', signupLimiter, async (request, response) => {
     assertEmailDeliveryConfigured()
     const data = parseRequest(signupSchema, request.body)
     const existing = await User.findOne({ $or: [{ email: data.email }, { username: data.username }] })
