@@ -1,4 +1,4 @@
-﻿import { createBrowserRouter } from 'react-router'
+import { createBrowserRouter } from 'react-router'
 import AppLayout from '@/components/layout/AppLayout'
 import { GuestOnly, RequireAuth } from '@/features/auth/components/AuthGuards'
 import LoginPage from '@/pages/LoginPage'
@@ -6,6 +6,7 @@ import NotFoundPage from '@/pages/NotFoundPage'
 import ProfilePage from '@/pages/ProfilePage'
 import RouteErrorPage from '@/pages/RouteErrorPage'
 import SignupPage from '@/pages/SignupPage'
+import VerifyEmailPage from '@/pages/VerifyEmailPage'
 import WorkspacePage from '@/pages/WorkspacePage'
 
 export const router = createBrowserRouter([
@@ -17,6 +18,11 @@ export const router = createBrowserRouter([
     {
         path: 'signup',
         element: <GuestOnly><SignupPage /></GuestOnly>,
+        errorElement: <RouteErrorPage />,
+    },
+    {
+        path: 'verify-email',
+        element: <GuestOnly><VerifyEmailPage /></GuestOnly>,
         errorElement: <RouteErrorPage />,
     },
     {

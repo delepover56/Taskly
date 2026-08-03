@@ -19,6 +19,7 @@ const TaskFormDialog = ({ task, defaults, onClose, onSubmit }) => {
         tags: task?.tags ?? ['Desk'],
     })
     const [error, setError] = useState('')
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     const updateField = (field, value) => setForm((current) => ({ ...current, [field]: value }))
     const toggleTag = (tag) => {
@@ -29,7 +30,7 @@ const TaskFormDialog = ({ task, defaults, onClose, onSubmit }) => {
         })
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault()
         const timestamp = new Date().toISOString()
         const result = taskSchema.safeParse({
@@ -45,13 +46,21 @@ const TaskFormDialog = ({ task, defaults, onClose, onSubmit }) => {
             return
         }
 
-        onSubmit(form)
-        onClose()
+        setError('')
+        setIsSubmitting(true)
+        try {
+            await onSubmit(form)
+            onClose()
+        } catch (requestError) {
+            setError(requestError.message)
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
         <Dialog open onClose={onClose} title={task ? 'Edit task' : 'Create a new task'} description="Plan the work, set its priority, and give it useful context." footer={(
-            <><Button variant="secondary" onClick={onClose}>Cancel</Button><Button type="submit" form="task-form"><Check className="size-4" />{task ? 'Save changes' : 'Create task'}</Button></>
+            <><Button variant="secondary" onClick={onClose}>Cancel</Button><Button type="submit" form="task-form" disabled={isSubmitting}><Check className="size-4" />{isSubmitting ? 'Saving...' : task ? 'Save changes' : 'Create task'}</Button></>
         )}>
             <form id="task-form" className="grid gap-4" onSubmit={handleSubmit}>
                 <label className="grid gap-1.5 text-xs font-semibold text-body">Task title<Input autoFocus value={form.title} onChange={(event) => updateField('title', event.target.value)} placeholder="What needs to be done?" /></label>

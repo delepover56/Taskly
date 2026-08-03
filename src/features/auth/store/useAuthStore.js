@@ -41,12 +41,34 @@ export const useAuthStore = create((set, get) => ({
         return session.user
     },
 
-    updateProfile: (profile) => set((state) => ({
-        user: state.user ? { ...state.user, ...profile } : null,
-    })),
+    updateProfile: async ({ name, username }) => {
+        const result = await apiRequest('/auth/profile', {
+            method: 'PATCH',
+            csrfToken: get().csrfToken,
+            body: JSON.stringify({ name, username }),
+        })
+        set({ user: result.user })
+        return result.user
+    },
 
-    isUsernameAvailable: () => true,
+    updateAvatar: async (dataUrl) => {
+        const result = await apiRequest('/auth/profile/avatar', {
+            method: 'PUT',
+            csrfToken: get().csrfToken,
+            body: JSON.stringify({ dataUrl }),
+        })
+        set({ user: result.user })
+        return result.user
+    },
 
+    removeAvatar: async () => {
+        const result = await apiRequest('/auth/profile/avatar', {
+            method: 'DELETE',
+            csrfToken: get().csrfToken,
+        })
+        set({ user: result.user })
+        return result.user
+    },
     logout: async () => {
         const csrfToken = get().csrfToken
         try {

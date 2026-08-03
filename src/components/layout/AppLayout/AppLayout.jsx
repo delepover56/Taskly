@@ -34,8 +34,13 @@ const AppLayout = () => {
     const [defaultPriority, setDefaultPriority] = useState(() => readPreference('taskly-default-priority', 'Medium'))
 
     const store = useTaskStore()
+    const initializeTasks = useTaskStore((state) => state.initialize)
     const user = useAuthStore((state) => state.user)
     const logout = useAuthStore((state) => state.logout)
+
+    useEffect(() => {
+        initializeTasks(user.id).catch((error) => toast.error(error.message))
+    }, [initializeTasks, user.id])
 
     useEffect(() => {
         document.documentElement.classList.toggle('dark', theme === 'dark')
@@ -81,27 +86,37 @@ const AppLayout = () => {
     const openCreate = () => setFormState({ mode: 'create', task: null })
     const openView = (task) => setViewTarget(task)
     const openEdit = (task) => setFormState({ mode: 'edit', task })
-    const saveTask = (data) => {
+    const saveTask = async (data) => {
         if (formState?.task) {
-            store.updateTask(formState.task.id, data)
+            await store.updateTask(formState.task.id, data)
             toast.success('Task changes saved.')
         } else {
-            store.addTask(data)
+            await store.addTask(data)
             toast.success('New task added.')
         }
     }
     const deleteTargetId = deleteTarget?.id
-    const deleteTargetTitle = deleteTarget?.title
 
-    const confirmDelete = () => {
+    const confirmDelete = async () => {
         if (!deleteTargetId) return
 
-        store.deleteTask(deleteTargetId)
-        toast.success(`"${deleteTargetTitle}" deleted.`)
-        setDeleteTarget(null)
+        try {
+            await store.deleteTask(deleteTargetId)
+            toast.success('Task deleted.')
+            setDeleteTarget(null)
+        } catch (error) {
+            toast.error(error.message)
+        }
     }
-    const archiveTask = (id) => { store.archiveTask(id); toast.success('Task archived.') }
-    const restoreTask = (id) => { store.restoreTask(id); toast.success('Task restored.') }
+    const toggleTask = async (id) => {
+        try { await store.toggleTask(id) } catch (error) { toast.error(error.message) }
+    }
+    const archiveTask = async (id) => {
+        try { await store.archiveTask(id); toast.success('Task archived.') } catch (error) { toast.error(error.message) }
+    }
+    const restoreTask = async (id) => {
+        try { await store.restoreTask(id); toast.success('Task restored.') } catch (error) { toast.error(error.message) }
+    }
     const exportTasks = () => {
         const backup = JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), tasks: store.tasks }, null, 2)
         const downloadUrl = URL.createObjectURL(new Blob([backup], { type: 'application/json' }))
@@ -118,7 +133,7 @@ const AppLayout = () => {
         openCreate,
         openView,
         openEdit,
-        toggleTask: store.toggleTask,
+        toggleTask,
         archiveTask,
         restoreTask,
         requestDelete: setDeleteTarget,
@@ -129,7 +144,7 @@ const AppLayout = () => {
             <Sidebar className="sticky top-0 hidden h-screen lg:flex" collapsible collapsed={sidebarCollapsed} onCollapsedChange={setSidebarCollapsed} />
             <MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} />
             <div className="min-w-0 flex-1">
-                <Topbar onMenuOpen={() => setMobileOpen(true)} themeData={theme} onToggleTheme={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')} onAddTask={openCreate} onOpenSettings={() => setSettingsOpen(true)} user={user} tasks={store.tasks} onOpenProfile={() => navigate('/profile')} onOpenLogin={() => navigate('/login')} onOpenSignUp={() => navigate('/signup')} onLogout={() => { logout(); navigate('/login'); toast.success('You have been logged out.') }} />
+                <Topbar onMenuOpen={() => setMobileOpen(true)} themeData={theme} onToggleTheme={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')} onAddTask={openCreate} onOpenSettings={() => setSettingsOpen(true)} user={user} tasks={store.tasks} onOpenProfile={() => navigate('/profile')} onOpenLogin={() => navigate('/login')} onOpenSignUp={() => navigate('/signup')} onLogout={async () => { await logout(); store.reset(); navigate('/login'); toast.success('You have been logged out.') }} />
                 <div ref={routeRef}>
                     <Outlet context={outletContext} />
                 </div>

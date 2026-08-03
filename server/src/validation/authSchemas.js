@@ -31,3 +31,10 @@ export const parseRequest = (schema, value) => {
     error.details = result.error.flatten().fieldErrors
     throw error
 }
+export const updateProfileSchema = z.object({
+    name: z.string().trim().min(2, 'Name must contain at least 2 characters.').max(80),
+    username: z.string().trim().toLowerCase().regex(/^[a-z0-9_]{3,20}$/, 'Username must be 3-20 characters using letters, numbers, or underscores.'),
+})
+export const avatarSchema = z.object({
+    dataUrl: z.string().max(3_000_000, 'Profile picture is too large.').regex(/^data:image\/(png|jpeg|webp);base64,/, 'Choose a PNG, JPG, or WebP image.'),
+})

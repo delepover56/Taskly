@@ -4,9 +4,11 @@ import rateLimit from 'express-rate-limit'
 import User from '../models/User.js'
 import { authenticate, requireCsrf } from '../middleware/authenticate.js'
 import { authCookieOptions, createSession } from '../services/authToken.js'
+import { deleteAvatar, uploadAvatar } from '../services/avatarStorage.js'
 import { assertEmailDeliveryConfigured, sendVerificationEmail } from '../services/email.js'
 import { createVerificationCode, matchesVerificationCode } from '../services/verificationCode.js'
-import { loginSchema, parseRequest, resendVerificationSchema, signupSchema, verifyEmailSchema } from '../validation/authSchemas.js'
+import { createStarterTasks } from '../services/starterTasks.js'
+import { avatarSchema, loginSchema, parseRequest, resendVerificationSchema, signupSchema, updateProfileSchema, verifyEmailSchema } from '../validation/authSchemas.js'
 
 const authRouter = Router()
 const authLimiter = rateLimit({
@@ -79,6 +81,9 @@ authRouter.post('/verify-email', async (request, response) => {
     user.verificationCodeHash = null
     user.verificationExpiresAt = null
     await user.save()
+    await createStarterTasks(user._id)
+    user.starterTasksCreated = true
+    await user.save()
 
     response.json({ message: 'Email verified. You can now log in.' })
 })
@@ -129,6 +134,46 @@ authRouter.post('/login', loginLimiter, async (request, response) => {
     const session = createSession(user.id)
     response.cookie('taskly_session', session.token, authCookieOptions())
     response.json({ user: user.toJSON(), csrfToken: session.csrfToken })
+})
+
+authRouter.patch('/profile', authenticate, requireCsrf, async (request, response) => {
+    const data = parseRequest(updateProfileSchema, request.body)
+    const usernameOwner = await User.findOne({
+        username: data.username,
+        _id: { $ne: request.auth.user._id },
+    })
+
+    if (usernameOwner) {
+        const error = new Error('That username is already taken.')
+        error.statusCode = 409
+        throw error
+    }
+
+    request.auth.user.name = data.name
+    request.auth.user.username = data.username
+    await request.auth.user.save()
+
+    response.json({ user: request.auth.user.toJSON() })
+})
+
+authRouter.put('/profile/avatar', authenticate, requireCsrf, async (request, response) => {
+    const data = parseRequest(avatarSchema, request.body)
+    const uploaded = await uploadAvatar({ dataUrl: data.dataUrl, userId: request.auth.user.id })
+    const user = await User.findByIdAndUpdate(
+        request.auth.user._id,
+        { avatarSrc: uploaded.secure_url, avatarPublicId: uploaded.public_id },
+        { new: true },
+    )
+    response.json({ user: user.toJSON() })
+})
+
+authRouter.delete('/profile/avatar', authenticate, requireCsrf, async (request, response) => {
+    const userWithAvatar = await User.findById(request.auth.user._id).select('+avatarPublicId')
+    await deleteAvatar(userWithAvatar.avatarPublicId)
+    userWithAvatar.avatarSrc = null
+    userWithAvatar.avatarPublicId = null
+    await userWithAvatar.save()
+    response.json({ user: userWithAvatar.toJSON() })
 })
 
 authRouter.get('/me', authenticate, async (request, response) => {

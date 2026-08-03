@@ -11,40 +11,39 @@ const SignupPage = () => {
     const navigate = useNavigate()
     const pageRef = useRef(null)
     const signUp = useAuthStore((state) => state.signUp)
-    const isUsernameAvailable = useAuthStore((state) => state.isUsernameAvailable)
-    const accounts = useAuthStore((state) => state.accounts)
     const [form, setForm] = useState({ name: '', username: '', email: '', password: '', confirmPassword: '' })
     const [error, setError] = useState('')
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     useGSAP(() => {
         if (prefersReducedMotion()) return
         gsap.from('[data-auth-panel]', { autoAlpha: 0, scale: 0.99, duration: 0.4, stagger: 0.08, ease: 'power2.out' })
     }, { scope: pageRef })
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault()
         if (form.name.trim().length < 2 || !form.email.includes('@')) {
             setError('Enter your name and a valid email address.')
             return
         }
         if (!/^[a-zA-Z0-9_]{3,20}$/.test(form.username.trim())) {
-            setError('Username must be 3–20 characters using letters, numbers, or underscores.')
+            setError('Username must be 3-20 characters using letters, numbers, or underscores.')
             return
         }
-        if (!isUsernameAvailable(form.username)) {
-            setError('That username is already taken.')
+        if (form.password.length < 8 || form.password !== form.confirmPassword) {
+            setError('Passwords must match and contain at least 8 characters.')
             return
         }
-        if (accounts.some((account) => account.email === form.email.trim().toLowerCase())) {
-            setError('An account already uses that email address.')
-            return
+        setError('')
+        setIsSubmitting(true)
+        try {
+            const result = await signUp(form)
+            navigate(`/verify-email?email=${encodeURIComponent(result.email)}`, { replace: true })
+        } catch (requestError) {
+            setError(requestError.message)
+        } finally {
+            setIsSubmitting(false)
         }
-        if (form.password.length < 6 || form.password !== form.confirmPassword) {
-            setError('Passwords must match and contain at least 6 characters.')
-            return
-        }
-        signUp(form)
-        navigate('/login', { replace: true, state: { accountCreated: true } })
     }
 
     const update = (field, value) => setForm((current) => ({ ...current, [field]: value }))
@@ -65,10 +64,10 @@ const SignupPage = () => {
                         <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><UserRound className="size-3.5" />Full name</span><Input autoComplete="name" value={form.name} onChange={(event) => update('name', event.target.value)} placeholder="Your name" /></label>
                         <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><UserRound className="size-3.5" />Username</span><Input autoComplete="username" value={form.username} onChange={(event) => update('username', event.target.value)} placeholder="taha_khan" /></label>
                         <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><Mail className="size-3.5" />Email address</span><Input type="email" autoComplete="email" value={form.email} onChange={(event) => update('email', event.target.value)} placeholder="you@example.com" /></label>
-                        <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><LockKeyhole className="size-3.5" />Password</span><Input type="password" autoComplete="new-password" value={form.password} onChange={(event) => update('password', event.target.value)} placeholder="At least 6 characters" /></label>
+                        <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><LockKeyhole className="size-3.5" />Password</span><Input type="password" autoComplete="new-password" value={form.password} onChange={(event) => update('password', event.target.value)} placeholder="At least 8 characters" /></label>
                         <label className="grid gap-1.5 text-xs font-semibold text-body">Confirm password<Input type="password" autoComplete="new-password" value={form.confirmPassword} onChange={(event) => update('confirmPassword', event.target.value)} placeholder="Repeat password" /></label>
                         {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-xs font-semibold text-danger" role="alert">{error}</p>}
-                        <Button className="mt-2 w-full" type="submit">Create account <ArrowRight className="size-4" /></Button>
+                        <Button className="mt-2 w-full" type="submit" disabled={isSubmitting}>{isSubmitting ? 'Creating account...' : 'Create account'} {!isSubmitting && <ArrowRight className="size-4" />}</Button>
                     </form>
                     <p className="mt-6 text-center text-sm text-muted">Already have an account? <Link className="font-semibold text-primary hover:underline" to="/login">Log in</Link></p>
                 </div>
