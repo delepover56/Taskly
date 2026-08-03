@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router'
 import { ArrowRight, LockKeyhole, Mail } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import PasswordInput from '@/components/ui/PasswordInput'
 import { useAuthStore } from '@/features/auth/store/useAuthStore'
 import tasklyLogo from '@/assets/logos/Taskly-Logo.svg'
 import { gsap, prefersReducedMotion, useGSAP } from '@/lib/gsap'
@@ -54,7 +55,7 @@ const LoginPage = () => {
                     {location.state?.emailVerified && <p className="mt-5 rounded-lg bg-success/10 px-3 py-2 text-xs font-semibold text-success">Email verified successfully. Log in to continue.</p>}
                     <form className="mt-8 grid gap-4" onSubmit={handleSubmit}>
                         <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><Mail className="size-3.5" />Email address</span><Input type="email" autoComplete="email" value={form.email} onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))} placeholder="you@example.com" /></label>
-                        <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><LockKeyhole className="size-3.5" />Password</span><Input type="password" autoComplete="current-password" value={form.password} onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))} placeholder="Your password" /></label>
+                        <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><LockKeyhole className="size-3.5" />Password</span><PasswordInput autoComplete="current-password" value={form.password} onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))} placeholder="Your password" /></label>
                         {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-xs font-semibold text-danger" role="alert">{error}</p>}
                         <Button className="mt-2 w-full" type="submit" disabled={isSubmitting}>{isSubmitting ? 'Logging in...' : 'Log in'} {!isSubmitting && <ArrowRight className="size-4" />}</Button>
                     </form>

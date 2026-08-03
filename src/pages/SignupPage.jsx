@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router'
 import { ArrowRight, LockKeyhole, Mail, UserRound } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import PasswordInput from '@/components/ui/PasswordInput'
 import { useAuthStore } from '@/features/auth/store/useAuthStore'
 import tasklyLogo from '@/assets/logos/Taskly-Logo.svg'
 import { gsap, prefersReducedMotion, useGSAP } from '@/lib/gsap'
@@ -64,8 +65,8 @@ const SignupPage = () => {
                         <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><UserRound className="size-3.5" />Full name</span><Input autoComplete="name" value={form.name} onChange={(event) => update('name', event.target.value)} placeholder="Your name" /></label>
                         <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><UserRound className="size-3.5" />Username</span><Input autoComplete="username" value={form.username} onChange={(event) => update('username', event.target.value)} placeholder="taha_khan" /></label>
                         <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><Mail className="size-3.5" />Email address</span><Input type="email" autoComplete="email" value={form.email} onChange={(event) => update('email', event.target.value)} placeholder="you@example.com" /></label>
-                        <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><LockKeyhole className="size-3.5" />Password</span><Input type="password" autoComplete="new-password" value={form.password} onChange={(event) => update('password', event.target.value)} placeholder="At least 8 characters" /></label>
-                        <label className="grid gap-1.5 text-xs font-semibold text-body">Confirm password<Input type="password" autoComplete="new-password" value={form.confirmPassword} onChange={(event) => update('confirmPassword', event.target.value)} placeholder="Repeat password" /></label>
+                        <label className="grid gap-1.5 text-xs font-semibold text-body"><span className="flex items-center gap-2"><LockKeyhole className="size-3.5" />Password</span><PasswordInput autoComplete="new-password" value={form.password} onChange={(event) => update('password', event.target.value)} placeholder="At least 8 characters" /></label>
+                        <label className="grid gap-1.5 text-xs font-semibold text-body">Confirm password<PasswordInput autoComplete="new-password" value={form.confirmPassword} onChange={(event) => update('confirmPassword', event.target.value)} placeholder="Repeat password" /></label>
                         {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-xs font-semibold text-danger" role="alert">{error}</p>}
                         <Button className="mt-2 w-full" type="submit" disabled={isSubmitting}>{isSubmitting ? 'Creating account...' : 'Create account'} {!isSubmitting && <ArrowRight className="size-4" />}</Button>
                     </form>
